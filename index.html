@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanize - Gestão Financeira</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
+                        dark: {
+                            bg: '#09090b',
+                            card: '#18181b',
+                            border: '#27272a',
+                            input: '#27272a',
+                            hover: '#3f3f46'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #09090b; color: #f4f4f5; font-family: system-ui, -apple-system, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #18181b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-dark-bg px-4">
+        <div class="bg-dark-card border border-dark-border p-8 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-brand-600/20 rounded-full blur-3xl"></div>
+            <div class="text-center mb-8">
+                <div class="inline-flex p-3 rounded-xl bg-brand-600/10 text-brand-500 mb-3 border border-brand-500/20">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Stanize Financeiro</h1>
+                <p class="text-sm text-zinc-400 mt-1">Acesse sua conta para continuar</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">E-mail</label>
+                    <input type="email" id="login-email" required class="w-full bg-dark-input border border-dark-border rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500 transition" placeholder="seu@email.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">Senha</label>
+                    <input type="password" id="login-password" required class="w-full bg-dark-input border border-dark-border rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500 transition" placeholder="••••••••">
+                </div>
+                <div id="login-error" class="hidden text-xs text-rose-500 font-medium bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 text-center"></div>
+                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg shadow-brand-600/20 flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Entrar no Sistema
+                </button>
+            </form>
+            <div class="mt-6 text-center text-xs text-zinc-500">
+                Acesso protegido • Stanize 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTRUTURA PRINCIPAL -->
+    <div id="app" class="hidden flex-1 flex flex-col">
+        <!-- HEADER -->
+        <header class="bg-dark-card border-b border-dark-border sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-brand-600 rounded-lg text-white">
+                        <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg text-white tracking-tight">Stanize</span>
+                        <span class="text-xs text-brand-500 font-semibold block sm:inline sm:ml-2 uppercase tracking-wider">Fluxo de Caixa</span>
+                    </div>
+                </div>
+
+                <!-- MENU NAVEGAÇÃO -->
+                <nav class="hidden md:flex items-center gap-1 bg-dark-bg p-1 rounded-xl border border-dark-border">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral
+                    </button>
+                    <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i> Despesas & Tipos
+                    </button>
+                    <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                        <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Entradas
+                    </button>
+                    <button onclick="switchTab('diretoria')" id="nav-diretoria" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                        <i data-lucide="presentation" class="w-4 h-4"></i> Diretoria & Dash
+                    </button>
+                    <button onclick="switchTab('usuarios')" id="nav-usuarios" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white hidden">
+                        <i data-lucide="users" class="w-4 h-4"></i> Usuários
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <div id="user-display-email" class="text-sm font-medium text-white">admin@stanize.com.br</div>
+                        <div id="user-display-role" class="text-xs text-brand-500 font-semibold uppercase">Master</div>
+                    </div>
+                    <button onclick="logout()" class="p-2 text-zinc-400 hover:text-rose-400 bg-dark-bg border border-dark-border rounded-lg transition" title="Sair">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MENU MOBILE -->
+            <div class="md:hidden flex border-t border-dark-border overflow-x-auto p-2 gap-2 custom-scrollbar">
+                <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-dark-card text-white whitespace-nowrap">Visão Geral</button>
+                <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Despesas</button>
+                <button onclick="switchTab('entradas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Entradas</button>
+                <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria</button>
+                <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap hidden">Usuários</button>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+            <!-- BARRA DE AÇÕES & FILTRO ATIVO -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="w-full md:w-auto flex items-center gap-3 flex-wrap">
+                    <label class="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+                        <i data-lucide="file-up" class="w-4 h-4"></i> Anexar Planilha
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="hidden">
+                    </label>
+                    <button onclick="exportData()" class="bg-dark-bg hover:bg-dark-hover border border-dark-border text-zinc-300 hover:text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Baixar Padrão
+                    </button>
+                    <div id="active-filter-badge" class="hidden items-center gap-2 bg-brand-500/20 border border-brand-500/30 px-3 py-1.5 rounded-xl text-xs text-brand-300">
+                        <span>Filtro Ativo: <strong id="filter-badge-text"></strong></span>
+                        <button onclick="clearCategoryFilter()" class="hover:text-white font-bold ml-1">✕</button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-auto flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2 bg-dark-bg border border-dark-border px-3 py-1.5 rounded-xl">
+                        <i data-lucide="calendar" class="w-4 h-4 text-zinc-400"></i>
+                        <span class="text-xs text-zinc-400">De:</span>
+                        <input type="date" id="filter-start-date" class="bg-transparent text-xs text-white focus:outline-none">
+                        <span class="text-xs text-zinc-400">Até:</span>
+                        <input type="date" id="filter-end-date" class="bg-transparent text-xs text-white focus:outline-none">
+                    </div>
+                    <button onclick="updateAll()" class="bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition">Filtrar</button>
+                    <button onclick="clearDateFilter()" class="text-xs text-zinc-400 hover:text-white underline">Limpar</button>
+                </div>
+            </div>
+
+            <!-- TAB 1: DASHBOARD / VISÃO GERAL -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Total Entradas</div>
+                        <div id="kpi-entradas" class="text-2xl font-extrabold text-emerald-400">R$ 0,00</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Total Saídas</div>
+                        <div id="kpi-saidas" class="text-2xl font-extrabold text-rose-400">R$ 0,00</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Saldo Líquido</div>
+                        <div id="kpi-saldo" class="text-2xl font-extrabold text-white">R$ 0,00</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Status Contas</div>
+                        <div class="flex items-center gap-4 mt-1">
+                            <div><span class="text-[10px] text-zinc-400">Pagas</span><span id="kpi-pagas" class="text-sm font-bold text-brand-500 block">R$ 0,00</span></div>
+                            <div class="w-px h-6 bg-dark-border"></div>
+                            <div><span class="text-[10px] text-zinc-400">Pendentes</span><span id="kpi-pendentes" class="text-sm font-bold text-amber-400 block">R$ 0,00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i> Fluxo Mensal (Entradas vs Saídas)
+                        </h3>
+                        <div class="h-72"><canvas id="chart-fluxo-mensal"></canvas></div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Gastos por Tipo de Despesa
+                        </h3>
+                        <div class="h-72 flex items-center justify-center"><canvas id="chart-tipo-despesa"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: DESPESAS & TIPOS -->
+            <section id="tab-despesas" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Tipo de Despesa</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-tipo"></canvas></div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Descrição</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-desc"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Detalhamento Completo de Saídas</h2>
+                            <p class="text-xs text-zinc-400">Clique nas fatias dos gráficos acima para filtrar os dados instantaneamente</p>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-zinc-500"></i>
+                            <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-xs text-zinc-300">
+                            <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
+                                <tr>
+                                    <th class="p-3">Vencimento</th>
+                                    <th class="p-3">Pagamento</th>
+                                    <th class="p-3">Tipo de Despesa</th>
+                                    <th class="p-3">Descrição</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Valor (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-despesas-body" class="divide-y divide-dark-border"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: ENTRADAS MANUAIS -->
+            <section id="tab-entradas" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada
+                        </h3>
+                        <form id="form-entrada" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Valor do Crédito (R$)</label>
+                                <input type="number" step="0.01" id="entrada-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Referente a</label>
+                                <input type="text" id="entrada-descricao" required placeholder="Descrição da entrada..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Data do Crédito</label>
+                                <input type="date" id="entrada-data" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+                                <i data-lucide="save" class="w-4 h-4"></i> Salvar Entrada
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Créditos Lançados</h3>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs text-zinc-300">
+                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
+                                    <tr>
+                                        <th class="p-3">Data</th>
+                                        <th class="p-3">Referência</th>
+                                        <th class="p-3 text-right">Valor (R$)</th>
+                                        <th class="p-3 text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-entradas-body" class="divide-y divide-dark-border"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO -->
+            <section id="tab-diretoria" class="tab-content hidden space-y-6">
+                <div class="bg-gradient-to-r from-zinc-900 via-dark-card to-brand-950/40 border border-brand-500/30 p-8 rounded-3xl relative shadow-2xl space-y-3">
+                    <span class="px-3 py-1 bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-full text-xs font-semibold uppercase">Painel da Diretoria</span>
+                    <h2 class="text-3xl font-extrabold text-white">Dashboard Estratégico & Financeiro</h2>
+                    <p class="text-zinc-400 text-sm">Acompanhamento executivo de despesas por tipo/categoria e contas em aberto.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Despesas por Tipo (Diretoria)
+                        </h3>
+                        <div class="h-72 flex items-center justify-center"><canvas id="dir-chart-tipo"></canvas></div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i> Contas em Aberto / Pendentes
+                        </h3>
+                        <div class="h-72 flex items-center justify-center"><canvas id="dir-chart-pendentes"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl text-center space-y-2">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase">Eficiência do Período</div>
+                        <div id="dir-eficiencia" class="text-3xl font-black text-brand-500">0%</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl text-center space-y-2">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase">Total em Aberto</div>
+                        <div id="dir-total-pendente" class="text-2xl font-black text-amber-400">R$ 0,00</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl text-center space-y-2">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase">Volume Processado</div>
+                        <div id="dir-volume-total" class="text-2xl font-black text-emerald-400">R$ 0,00</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: GESTÃO DE USUÁRIOS -->
+            <section id="tab-usuarios" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-brand-500"></i> Cadastrar Operador
+                        </h3>
+                        <form id="form-cad-user" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">E-mail</label>
+                                <input type="email" id="cad-user-email" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Senha</label>
+                                <input type="password" id="cad-user-pass" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                                Salvar Usuário
+                            </button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Usuários do Sistema</h3>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs text-zinc-300">
+                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
+                                    <tr><th class="p-3">E-mail</th><th class="p-3">Perfil</th><th class="p-3 text-center">Ações</th></tr>
+                                </thead>
+                                <tbody id="table-users-body" class="divide-y divide-dark-border"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="bg-dark-card border-t border-dark-border py-4 text-center text-xs text-zinc-500">
+            Stanize Consultoria e Assessoria Comercial • Sistema Interno de Fluxo de Caixa
+        </footer>
+    </div>
+
+    <!-- SCRIPT DO SISTEMA -->
+    <script>
+        const MASTER_EMAIL = "administrativo@stanize.com.br";
+        const MASTER_PASS = "Lacan1404@";
+
+        let users = JSON.parse(localStorage.getItem('stanize_users')) || [
+            { email: MASTER_EMAIL, pass: MASTER_PASS, role: 'MASTER' }
+        ];
+
+        let currentUser = null;
+        let despesas = JSON.parse(localStorage.getItem('stanize_despesas')) || [];
+        let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
+        let activeCategoryFilter = null;
+
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value.trim();
+                const pass = document.getElementById('login-password').value.trim();
+                const found = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.pass === pass);
+                if (found) {
+                    currentUser = found;
+                    initApp();
+                } else {
+                    const err = document.getElementById('login-error');
+                    err.textContent = "E-mail ou senha incorretos!";
+                    err.classList.remove('hidden');
+                }
+            });
+
+            document.getElementById('form-entrada').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const valor = parseFloat(document.getElementById('entrada-valor').value);
+                const descricao = document.getElementById('entrada-descricao').value.trim();
+                const data = document.getElementById('entrada-data').value;
+                entradas.push({ id: Date.now(), valor, descricao, data });
+                localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                document.getElementById('form-entrada').reset();
+                updateAll();
+            });
+
+            document.getElementById('form-cad-user').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('cad-user-email').value.trim();
+                const pass = document.getElementById('cad-user-pass').value.trim();
+                if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                    alert('Usuário já cadastrado!');
+                    return;
+                }
+                users.push({ email, pass, role: 'OPERADOR' });
+                localStorage.setItem('stanize_users', JSON.stringify(users));
+                document.getElementById('form-cad-user').reset();
+                renderUsers();
+            });
+
+            document.getElementById('excel-file-input').addEventListener('change', handleFileUpload);
+        });
+
+        function initApp() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('user-display-email').textContent = currentUser.email;
+            document.getElementById('user-display-role').textContent = currentUser.role;
+
+            if (currentUser.role === 'MASTER') {
+                document.getElementById('nav-usuarios').classList.remove('hidden');
+                document.getElementById('mob-nav-usuarios').classList.remove('hidden');
+            }
+            renderUsers();
+            updateAll();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-dark-card', 'text-white', 'shadow');
+                btn.classList.add('text-zinc-400');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-dark-card', 'text-white', 'shadow');
+                activeBtn.classList.remove('text-zinc-400');
+            }
+        }
+
+        function getFilteredData() {
+            const start = document.getElementById('filter-start-date').value;
+            const end = document.getElementById('filter-end-date').value;
+
+            let fDespesas = [...despesas];
+            let fEntradas = [...entradas];
+
+            if (start) {
+                fDespesas = fDespesas.filter(d => (d.dataPagamento || d.dataVencimento) >= start);
+                fEntradas = fEntradas.filter(e => e.data >= start);
+            }
+            if (end) {
+                fDespesas = fDespesas.filter(d => (d.dataPagamento || d.dataVencimento) <= end);
+                fEntradas = fEntradas.filter(e => e.data <= end);
+            }
+
+            if (activeCategoryFilter) {
+                fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
+            }
+
+            return { fDespesas, fEntradas };
+        }
+
+        function updateAll() {
+            const { fDespesas, fEntradas } = getFilteredData();
+            const totalEntradas = fEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
+            const totalSaidas = fDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+            const saldo = totalEntradas - totalSaidas;
+
+            const pagas = fDespesas.filter(d => (d.status || '').toLowerCase().includes('pago')).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+            const pendentes = totalSaidas - pagas;
+
+            document.getElementById('kpi-entradas').textContent = formatCurrency(totalEntradas);
+            document.getElementById('kpi-saidas').textContent = formatCurrency(totalSaidas);
+            document.getElementById('kpi-saldo').textContent = formatCurrency(saldo);
+            document.getElementById('kpi-pagas').textContent = formatCurrency(pagas);
+            document.getElementById('kpi-pendentes').textContent = formatCurrency(pendentes);
+
+            if (activeCategoryFilter) {
+                document.getElementById('active-filter-badge').classList.remove('hidden');
+                document.getElementById('active-filter-badge').classList.add('flex');
+                document.getElementById('filter-badge-text').textContent = activeCategoryFilter;
+            } else {
+                document.getElementById('active-filter-badge').classList.add('hidden');
+                document.getElementById('active-filter-badge').classList.remove('flex');
+            }
+
+            renderTables();
+            renderCharts(fEntradas, fDespesas);
+            renderDiretoria(totalEntradas, totalSaidas, saldo, fDespesas);
+        }
+
+        function clearCategoryFilter() {
+            activeCategoryFilter = null;
+            updateAll();
+        }
+
+        function clearDateFilter() {
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            updateAll();
+        }
+
+        function formatCurrency(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function renderTables() {
+            const { fDespesas, fEntradas } = getFilteredData();
+            const search = document.getElementById('search-despesas')?.value.toLowerCase() || '';
+
+            const tbodyDespesas = document.getElementById('table-despesas-body');
+            tbodyDespesas.innerHTML = '';
+            const filteredDesp = fDespesas.filter(d => 
+                (d.descricao || '').toLowerCase().includes(search) || 
+                (d.tipoDespesa || '').toLowerCase().includes(search)
+            );
+
+            if (filteredDesp.length === 0) {
+                tbodyDespesas.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
+            } else {
+                filteredDesp.forEach(d => {
+                    const isPago = (d.status || '').toLowerCase().includes('pago');
+                    tbodyDespesas.innerHTML += `
+                        <tr class="hover:bg-dark-hover/50 transition">
+                            <td class="p-3">${d.dataVencimento || '-'}</td>
+                            <td class="p-3">${d.dataPagamento || '-'}</td>
+                            <td class="p-3 font-medium text-white">${d.tipoDespesa || 'Geral'}</td>
+                            <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${d.status || 'Pendente'}</span></td>
+                            <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const tbodyEntradas = document.getElementById('table-entradas-body');
+            tbodyEntradas.innerHTML = '';
+            fEntradas.forEach(e => {
+                tbodyEntradas.innerHTML += `
+                    <tr class="hover:bg-dark-hover/50 transition">
+                        <td class="p-3">${e.data}</td>
+                        <td class="p-3 font-medium text-white">${e.descricao}</td>
+                        <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
+                        <td class="p-3 text-center"><button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function deleteEntrada(id) {
+            entradas = entradas.filter(e => e.id !== id);
+            localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+            updateAll();
+        }
+
+        function renderCharts(fEntradas, fDespesas) {
+            Object.values(charts).forEach(c => c.destroy());
+            charts = {};
+
+            // Helper para cross-filtering ao clicar no gráfico
+            const handleChartClick = (evt, elements, chartInstance) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const label = chartInstance.data.labels[index];
+                    activeCategoryFilter = label;
+                    updateAll();
+                }
+            };
+
+            // 1. Tipo de Despesa (Dashboard Principal)
+            const tipoMap = {};
+            fDespesas.forEach(d => {
+                const tipo = d.tipoDespesa || 'Outros';
+                tipoMap[tipo] = (tipoMap[tipo] || 0) + (parseFloat(d.valor) || 0);
+            });
+            charts.tipo = new Chart(document.getElementById('chart-tipo-despesa').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(tipoMap).length ? Object.keys(tipoMap) : ['Sem dados'],
+                    datasets: [{ data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], backgroundColor: ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } } }
+            });
+
+            // 2. Gráfico Tipo Despesa (Aba Despesas)
+            charts.despTipo = new Chart(document.getElementById('chart-despesas-tipo').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(tipoMap),
+                    datasets: [{ label: 'Valor por Tipo', data: Object.values(tipoMap), backgroundColor: '#7c3aed', borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
+            });
+
+            // 3. Gráfico Descrição (Aba Despesas)
+            const descMap = {};
+            fDespesas.forEach(d => {
+                const desc = d.descricao || 'Outros';
+                descMap[desc] = (descMap[desc] || 0) + (parseFloat(d.valor) || 0);
+            });
+            charts.despDesc = new Chart(document.getElementById('chart-despesas-desc').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(descMap),
+                    datasets: [{ label: 'Valor por Descrição', data: Object.values(descMap), backgroundColor: '#3b82f6', borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
+            });
+
+            // 4. Fluxo Mensal
+            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const entMensal = new Array(12).fill(0);
+            const saiMensal = new Array(12).fill(0);
+            fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data).getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
+            fDespesas.forEach(d => { const dt = d.dataPagamento || d.dataVencimento; if (dt) { const m = new Date(dt).getMonth(); if (m >= 0 && m < 12) saiMensal[m] += d.valor; } });
+
+            charts.fluxo = new Chart(document.getElementById('chart-fluxo-mensal').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Entradas', data: entMensal, backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Saídas', data: saiMensal, backgroundColor: '#7c3aed', borderRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
+            });
+        }
+
+        function renderDiretoria(entradas, saidas, saldo, fDespesas) {
+            const vol = entradas + saidas;
+            document.getElementById('dir-volume-total').textContent = formatCurrency(vol);
+            const efic = entradas > 0 ? ((saldo / entradas) * 100).toFixed(1) : '0.0';
+            document.getElementById('dir-eficiencia').textContent = `${efic}%`;
+
+            const pagas = fDespesas.filter(d => (d.status || '').toLowerCase().includes('pago')).reduce((acc, d) => acc + d.valor, 0);
+            const pendentes = saidas - pagas;
+            document.getElementById('dir-total-pendente').textContent = formatCurrency(pendentes);
+
+            // Gráficos Diretoria
+            const tipoMap = {};
+            fDespesas.forEach(d => { const t = d.tipoDespesa || 'Outros'; tipoMap[t] = (tipoMap[t] || 0) + d.valor; });
+            
+            if (charts.dirTipo) charts.dirTipo.destroy();
+            charts.dirTipo = new Chart(document.getElementById('dir-chart-tipo').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(tipoMap), datasets: [{ data: Object.values(tipoMap), backgroundColor: ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } } }
+            });
+
+            // Contas em aberto
+            const pendMap = {};
+            fDespesas.filter(d => !(d.status || '').toLowerCase().includes('pago')).forEach(d => {
+                const t = d.tipoDespesa || 'Outros';
+                pendMap[t] = (pendMap[t] || 0) + d.valor;
+            });
+
+            if (charts.dirPend) charts.dirPend.destroy();
+            charts.dirPend = new Chart(document.getElementById('dir-chart-pendentes').getContext('2d'), {
+                type: 'bar',
+                data: { labels: Object.keys(pendMap).length ? Object.keys(pendMap) : ['Sem pendências'], datasets: [{ label: 'Valores em Aberto', data: Object.values(pendMap).length ? Object.values(pendMap) : [0], backgroundColor: '#f59e0b', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
+            });
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                if (json.length < 2) return;
+                const headers = json[0].map(h => String(h).toLowerCase().trim());
+                
+                const idxVenc = headers.findIndex(h => h.includes('vencimento') || h.includes('data'));
+                const idxPag = headers.findIndex(h => h.includes('pagamento'));
+                const idxTipo = headers.findIndex(h => h.includes('tipo') || h.includes('categoria'));
+                const idxDesc = headers.findIndex(h => h.includes('descri') || h.includes('fornecedor') || h.includes('referencia'));
+                const idxVal = headers.findIndex(h => h.includes('valor') || h.includes('debito') || h.includes('saida'));
+                const idxStatus = headers.findIndex(h => h.includes('status') || h.includes('situa'));
+
+                const parsedDespesas = [];
+                for (let i = 1; i < json.length; i++) {
+                    const row = json[i];
+                    if (!row || row.length === 0) continue;
+                    const val = parseFloat(row[idxVal !== -1 ? idxVal : 4]) || 0;
+                    if (val === 0) continue;
+
+                    parsedDespesas.push({
+                        id: Date.now() + i,
+                        dataVencimento: row[idxVenc !== -1 ? idxVenc : 0] || '',
+                        dataPagamento: row[idxPag !== -1 ? idxPag : 1] || '',
+                        tipoDespesa: row[idxTipo !== -1 ? idxTipo : 2] || 'Geral',
+                        descricao: row[idxDesc !== -1 ? idxDesc : 3] || 'Sem Descrição',
+                        status: row[idxStatus !== -1 ? idxStatus : 5] || 'Pago',
+                        valor: val
+                    });
+                }
+                despesas = parsedDespesas;
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                alert(`${despesas.length} registros importados com sucesso!`);
+                updateAll();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportData() {
+            const dataToExport = despesas.map(d => ({
+                'Data Vencimento': d.dataVencimento,
+                'Data Pagamento': d.dataPagamento,
+                'Tipo de Despesa': d.tipoDespesa,
+                'Descrição': d.descricao,
+                'Status': d.status,
+                'Valor (R$)': d.valor
+            }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Fluxo de Caixa");
+            XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('table-users-body');
+            tbody.innerHTML = '';
+            users.forEach((u, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-dark-hover/50 transition">
+                        <td class="p-3 font-medium text-white">${u.email}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'MASTER' ? 'bg-brand-500/20 text-brand-400' : 'bg-zinc-800 text-zinc-300'}">${u.role}</span></td>
+                        <td class="p-3 text-center">${u.role !== 'MASTER' ? `<button onclick="deleteUser(${idx})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : '-'}</td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function deleteUser(idx) {
+            users.splice(idx, 1);
+            localStorage.setItem('stanize_users', JSON.stringify(users));
+            renderUsers();
+        }
+    </script>
+</body>
+</html>
