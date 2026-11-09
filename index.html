@@ -220,15 +220,20 @@
                     </div>
                 </div>
 
-                <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-6 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-lg font-bold text-white">Detalhamento Completo de Saídas</h2>
-                            <p class="text-xs text-zinc-400">Gerencie, edite ou exclua despesas e tipos registrados</p>
+                            <p class="text-xs text-zinc-400">Selecione vários itens para exclusão em massa ou gerencie individualmente</p>
                         </div>
-                        <div class="relative w-full sm:w-64">
-                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-zinc-500"></i>
-                            <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <button onclick="deleteSelectedDespesas()" id="btn-delete-selected" class="hidden bg-rose-600/20 border border-rose-500/30 hover:bg-rose-600 text-rose-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir Selecionadas (<span id="selected-count">0</span>)
+                            </button>
+                            <div class="relative w-full sm:w-64">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-zinc-500"></i>
+                                <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+                            </div>
                         </div>
                     </div>
 
@@ -236,6 +241,9 @@
                         <table class="w-full text-left text-xs text-zinc-300">
                             <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
                                 <tr>
+                                    <th class="p-3 w-10 text-center">
+                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                                    </th>
                                     <th class="p-3">Vencimento</th>
                                     <th class="p-3">Pagamento</th>
                                     <th class="p-3">Tipo de Despesa</th>
@@ -446,6 +454,7 @@
         let despesas = JSON.parse(localStorage.getItem('stanize_despesas')) || [];
         let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
         let activeCategoryFilter = null;
+        let selectedDespesasIds = new Set();
 
         let charts = {};
 
@@ -638,12 +647,16 @@
             );
 
             if (filteredDesp.length === 0) {
-                tbodyDespesas.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
+                tbodyDespesas.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
             } else {
                 filteredDesp.forEach(d => {
                     const isPago = (d.status || '').toLowerCase().includes('pago');
+                    const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
                     tbodyDespesas.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
+                            <td class="p-3 text-center">
+                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id})" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                            </td>
                             <td class="p-3">${d.dataVencimento || '-'}</td>
                             <td class="p-3">${d.dataPagamento || '-'}</td>
                             <td class="p-3 font-medium text-white">${d.tipoDespesa || 'Geral'}</td>
@@ -660,6 +673,8 @@
                     `;
                 });
             }
+
+            updateDeleteSelectedButton();
 
             const tbodyEntradas = document.getElementById('table-entradas-body');
             tbodyEntradas.innerHTML = '';
@@ -679,6 +694,50 @@
                 `;
             });
             lucide.createIcons();
+        }
+
+        // SELEÇÃO MÚLTIPLA E EXCLUSÃO EM MASSA
+        function toggleSelectDespesa(id) {
+            if (selectedDespesasIds.has(id)) {
+                selectedDespesasIds.delete(id);
+            } else {
+                selectedDespesasIds.add(id);
+            }
+            updateDeleteSelectedButton();
+        }
+
+        function toggleSelectAll(masterCheckbox) {
+            const { fDespesas } = getFilteredData();
+            if (masterCheckbox.checked) {
+                fDespesas.forEach(d => selectedDespesasIds.add(d.id));
+            } else {
+                fDespesas.forEach(d => selectedDespesasIds.delete(d.id));
+            }
+            renderTables();
+        }
+
+        function updateDeleteSelectedButton() {
+            const btn = document.getElementById('btn-delete-selected');
+            const countSpan = document.getElementById('selected-count');
+            if (selectedDespesasIds.size > 0) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+                countSpan.textContent = selectedDespesasIds.size;
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        function deleteSelectedDespesas() {
+            if (selectedDespesasIds.size === 0) return;
+            if (confirm(`Tem certeza de que deseja excluir as ${selectedDespesasIds.size} despesas selecionadas?`)) {
+                despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
+                selectedDespesasIds.clear();
+                document.getElementById('select-all-checkbox').checked = false;
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                updateAll();
+            }
         }
 
         // AÇÕES DE EDIÇÃO E EXCLUSÃO - DESPESAS
@@ -704,6 +763,7 @@
         function deleteDespesa(id) {
             if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
                 despesas = despesas.filter(d => d.id != id);
+                selectedDespesasIds.delete(id);
                 localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                 updateAll();
             }
@@ -881,6 +941,7 @@
                     });
                 }
                 despesas = parsedDespesas;
+                selectedDespesasIds.clear();
                 localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                 alert(`${despesas.length} registros importados com sucesso!`);
                 updateAll();
