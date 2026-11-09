@@ -224,7 +224,7 @@
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                         <div>
                             <h2 class="text-lg font-bold text-white">Detalhamento Completo de Saídas</h2>
-                            <p class="text-xs text-zinc-400">Clique nas fatias dos gráficos acima para filtrar os dados instantaneamente</p>
+                            <p class="text-xs text-zinc-400">Gerencie, edite ou exclua despesas e tipos registrados</p>
                         </div>
                         <div class="relative w-full sm:w-64">
                             <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-zinc-500"></i>
@@ -242,6 +242,7 @@
                                     <th class="p-3">Descrição</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3 text-right">Valor (R$)</th>
+                                    <th class="p-3 text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="table-despesas-body" class="divide-y divide-dark-border"></tbody>
@@ -254,10 +255,11 @@
             <section id="tab-entradas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                        <h3 id="form-entrada-title" class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
                             <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada
                         </h3>
                         <form id="form-entrada" class="space-y-4">
+                            <input type="hidden" id="entrada-edit-id">
                             <div>
                                 <label class="block text-xs font-medium text-zinc-400 mb-1">Valor do Crédito (R$)</label>
                                 <input type="number" step="0.01" id="entrada-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
@@ -270,9 +272,14 @@
                                 <label class="block text-xs font-medium text-zinc-400 mb-1">Data do Crédito</label>
                                 <input type="date" id="entrada-data" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
-                                <i data-lucide="save" class="w-4 h-4"></i> Salvar Entrada
-                            </button>
+                            <div class="flex gap-2">
+                                <button type="submit" id="btn-salvar-entrada" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Salvar Entrada
+                                </button>
+                                <button type="button" id="btn-cancelar-entrada" onclick="cancelEditEntrada()" class="hidden bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium px-4 py-2.5 rounded-xl transition text-xs">
+                                    Cancelar
+                                </button>
+                            </div>
                         </form>
                     </div>
 
@@ -376,6 +383,56 @@
         </footer>
     </div>
 
+    <!-- MODAL DE EDIÇÃO DE DESPESA -->
+    <div id="modal-edit-despesa" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 px-4">
+        <div class="bg-dark-card border border-dark-border p-6 rounded-2xl shadow-2xl w-full max-w-lg space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Despesa
+                </h3>
+                <button onclick="closeEditDespesaModal()" class="text-zinc-400 hover:text-white">✕</button>
+            </div>
+            <form id="form-edit-despesa" class="space-y-3">
+                <input type="hidden" id="edit-despesa-id">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
+                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Pagamento</label>
+                        <input type="date" id="edit-despesa-pag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Tipo de Despesa</label>
+                    <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Descrição</label>
+                    <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Valor (R$)</label>
+                        <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Status</label>
+                        <select id="edit-despesa-status" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                            <option value="Pago">Pago</option>
+                            <option value="Pendente">Pendente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditDespesaModal()" class="px-4 py-2 rounded-xl bg-zinc-800 text-xs text-zinc-300 hover:bg-zinc-700">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-medium hover:bg-brand-700">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPT DO SISTEMA -->
     <script>
         const MASTER_EMAIL = "administrativo@stanize.com.br";
@@ -412,13 +469,41 @@
 
             document.getElementById('form-entrada').addEventListener('submit', (e) => {
                 e.preventDefault();
+                const editId = document.getElementById('entrada-edit-id').value;
                 const valor = parseFloat(document.getElementById('entrada-valor').value);
                 const descricao = document.getElementById('entrada-descricao').value.trim();
                 const data = document.getElementById('entrada-data').value;
-                entradas.push({ id: Date.now(), valor, descricao, data });
+
+                if (editId) {
+                    const idx = entradas.findIndex(item => item.id == editId);
+                    if (idx !== -1) {
+                        entradas[idx] = { id: Number(editId), valor, descricao, data };
+                    }
+                } else {
+                    entradas.push({ id: Date.now(), valor, descricao, data });
+                }
+
                 localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
-                document.getElementById('form-entrada').reset();
+                cancelEditEntrada();
                 updateAll();
+            });
+
+            document.getElementById('form-edit-despesa').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-despesa-id').value;
+                const idx = despesas.findIndex(d => d.id == id);
+                if (idx !== -1) {
+                    despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
+                    despesas[idx].dataPagamento = document.getElementById('edit-despesa-pag').value;
+                    despesas[idx].tipoDespesa = document.getElementById('edit-despesa-tipo').value.trim();
+                    despesas[idx].descricao = document.getElementById('edit-despesa-desc').value.trim();
+                    despesas[idx].valor = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
+                    despesas[idx].status = document.getElementById('edit-despesa-status').value;
+
+                    localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                    closeEditDespesaModal();
+                    updateAll();
+                }
             });
 
             document.getElementById('form-cad-user').addEventListener('submit', (e) => {
@@ -553,7 +638,7 @@
             );
 
             if (filteredDesp.length === 0) {
-                tbodyDespesas.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
+                tbodyDespesas.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
             } else {
                 filteredDesp.forEach(d => {
                     const isPago = (d.status || '').toLowerCase().includes('pago');
@@ -565,6 +650,12 @@
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
                             <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${d.status || 'Pendente'}</span></td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
+                            <td class="p-3 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
@@ -578,24 +669,81 @@
                         <td class="p-3">${e.data}</td>
                         <td class="p-3 font-medium text-white">${e.descricao}</td>
                         <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
-                        <td class="p-3 text-center"><button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                        <td class="p-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="startEditEntrada(${e.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                <button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
             lucide.createIcons();
         }
 
+        // AÇÕES DE EDIÇÃO E EXCLUSÃO - DESPESAS
+        function openEditDespesaModal(id) {
+            const d = despesas.find(item => item.id == id);
+            if (!d) return;
+
+            document.getElementById('edit-despesa-id').value = d.id;
+            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
+            document.getElementById('edit-despesa-pag').value = d.dataPagamento || '';
+            document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
+            document.getElementById('edit-despesa-desc').value = d.descricao || '';
+            document.getElementById('edit-despesa-valor').value = d.valor || 0;
+            document.getElementById('edit-despesa-status').value = d.status || 'Pago';
+
+            document.getElementById('modal-edit-despesa').classList.remove('hidden');
+        }
+
+        function closeEditDespesaModal() {
+            document.getElementById('modal-edit-despesa').classList.add('hidden');
+        }
+
+        function deleteDespesa(id) {
+            if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
+                despesas = despesas.filter(d => d.id != id);
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                updateAll();
+            }
+        }
+
+        // AÇÕES DE EDIÇÃO E EXCLUSÃO - ENTRADAS
+        function startEditEntrada(id) {
+            const e = entradas.find(item => item.id == id);
+            if (!e) return;
+
+            document.getElementById('entrada-edit-id').value = e.id;
+            document.getElementById('entrada-valor').value = e.valor;
+            document.getElementById('entrada-descricao').value = e.descricao;
+            document.getElementById('entrada-data').value = e.data;
+
+            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Entrada';
+            document.getElementById('btn-cancelar-entrada').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function cancelEditEntrada() {
+            document.getElementById('form-entrada').reset();
+            document.getElementById('entrada-edit-id').value = '';
+            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada';
+            document.getElementById('btn-cancelar-entrada').classList.add('hidden');
+            lucide.createIcons();
+        }
+
         function deleteEntrada(id) {
-            entradas = entradas.filter(e => e.id !== id);
-            localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
-            updateAll();
+            if (confirm('Tem certeza de que deseja excluir esta entrada?')) {
+                entradas = entradas.filter(e => e.id !== id);
+                localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                updateAll();
+            }
         }
 
         function renderCharts(fEntradas, fDespesas) {
             Object.values(charts).forEach(c => c.destroy());
             charts = {};
 
-            // Helper para cross-filtering ao clicar no gráfico
             const handleChartClick = (evt, elements, chartInstance) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
@@ -605,7 +753,6 @@
                 }
             };
 
-            // 1. Tipo de Despesa (Dashboard Principal)
             const tipoMap = {};
             fDespesas.forEach(d => {
                 const tipo = d.tipoDespesa || 'Outros';
@@ -620,7 +767,6 @@
                 options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } } }
             });
 
-            // 2. Gráfico Tipo Despesa (Aba Despesas)
             charts.despTipo = new Chart(document.getElementById('chart-despesas-tipo').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -630,7 +776,6 @@
                 options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
             });
 
-            // 3. Gráfico Descrição (Aba Despesas)
             const descMap = {};
             fDespesas.forEach(d => {
                 const desc = d.descricao || 'Outros';
@@ -645,7 +790,6 @@
                 options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
             });
 
-            // 4. Fluxo Mensal
             const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const entMensal = new Array(12).fill(0);
             const saiMensal = new Array(12).fill(0);
@@ -675,7 +819,6 @@
             const pendentes = saidas - pagas;
             document.getElementById('dir-total-pendente').textContent = formatCurrency(pendentes);
 
-            // Gráficos Diretoria
             const tipoMap = {};
             fDespesas.forEach(d => { const t = d.tipoDespesa || 'Outros'; tipoMap[t] = (tipoMap[t] || 0) + d.valor; });
             
@@ -686,7 +829,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } } }
             });
 
-            // Contas em aberto
             const pendMap = {};
             fDespesas.filter(d => !(d.status || '').toLowerCase().includes('pago')).forEach(d => {
                 const t = d.tipoDespesa || 'Outros';
