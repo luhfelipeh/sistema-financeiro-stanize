@@ -246,6 +246,7 @@
                                     </th>
                                     <th class="p-3">Vencimento</th>
                                     <th class="p-3">Pagamento</th>
+                                    <th class="p-3">Mês</th>
                                     <th class="p-3">Tipo de Despesa</th>
                                     <th class="p-3">Descrição</th>
                                     <th class="p-3">Status</th>
@@ -529,6 +530,11 @@
 
         let charts = {};
 
+        const monthMap = {
+            'janeiro': 0, 'fevereiro': 1, 'março': 2, 'marco': 2, 'abril': 3, 'maio': 4, 'junho': 5,
+            'julho': 6, 'agosto': 7, 'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
 
@@ -721,7 +727,7 @@
             );
 
             if (filteredDesp.length === 0) {
-                tbodyDespesas.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
+                tbodyDespesas.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
             } else {
                 filteredDesp.forEach(d => {
                     const isPago = (d.status || '').toLowerCase().includes('pago');
@@ -733,6 +739,7 @@
                             </td>
                             <td class="p-3">${d.dataVencimento || '-'}</td>
                             <td class="p-3">${d.dataPagamento || '-'}</td>
+                            <td class="p-3 font-semibold text-brand-400">${d.mes || '-'}</td>
                             <td class="p-3 font-medium text-white">${d.tipoDespesa || 'Geral'}</td>
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
                             <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${d.status || 'Pendente'}</span></td>
@@ -926,8 +933,17 @@
             const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const entMensal = new Array(12).fill(0);
             const saiMensal = new Array(12).fill(0);
-            fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data).getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
-            fDespesas.forEach(d => { const dt = d.dataPagamento || d.dataVencimento; if (dt) { const m = new Date(dt).getMonth(); if (m >= 0 && m < 12) saiMensal[m] += d.valor; } });
+            fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
+            fDespesas.forEach(d => {
+                const dt = d.dataPagamento || d.dataVencimento;
+                let m = -1;
+                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
+                    m = monthMap[String(d.mes).toLowerCase().trim()];
+                } else if (dt) {
+                    m = new Date(dt + 'T00:00:00').getMonth();
+                }
+                if (m >= 0 && m < 12) saiMensal[m] += d.valor;
+            });
 
             charts.fluxo = new Chart(document.getElementById('chart-fluxo-mensal').getContext('2d'), {
                 type: 'bar',
@@ -952,11 +968,21 @@
             if (selectedMonth !== 'all') {
                 const m = parseInt(selectedMonth);
                 dDespesas = dDespesas.filter(d => {
+                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
+                        return monthMap[String(d.mes).toLowerCase().trim()] === m;
+                    }
                     const dt = d.dataPagamento || d.dataVencimento;
-                    return dt && new Date(dt).getMonth() === m;
+                    if (dt) {
+                        const parsed = new Date(dt + 'T00:00:00');
+                        return !isNaN(parsed) && parsed.getMonth() === m;
+                    }
+                    return false;
                 });
+
                 dEntradas = dEntradas.filter(e => {
-                    return e.data && new Date(e.data).getMonth() === m;
+                    if (!e.data) return false;
+                    const parsed = new Date(e.data + 'T00:00:00');
+                    return !isNaN(parsed) && parsed.getMonth() === m;
                 });
             }
 
@@ -1070,40 +1096,62 @@
             }
         }
 
+        function formatDateVal(val) {
+            if (!val) return '';
+            if (val instanceof Date) {
+                const y = val.getFullYear();
+                const m = String(val.getMonth() + 1).padStart(2, '0');
+                const d = String(val.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+            const s = String(val).trim();
+            if (s.includes('/')) {
+                const parts = s.split('/');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`;
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+            }
+            return s.substring(0, 10);
+        }
+
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (evt) => {
                 const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
+                // cellDates: true ensures SheetJS correctly parses Excel serial date numbers into JS Date objects
+                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 if (json.length < 2) return;
                 const headers = json[0].map(h => String(h).toLowerCase().trim());
                 
-                const idxVenc = headers.findIndex(h => h.includes('vencimento') || h.includes('data'));
+                const idxVenc = headers.findIndex(h => h.includes('vencimento') || h.includes('data') || h.includes('lançamento'));
                 const idxPag = headers.findIndex(h => h.includes('pagamento'));
                 const idxTipo = headers.findIndex(h => h.includes('tipo') || h.includes('categoria'));
                 const idxDesc = headers.findIndex(h => h.includes('descri') || h.includes('fornecedor') || h.includes('referencia'));
                 const idxVal = headers.findIndex(h => h.includes('valor') || h.includes('debito') || h.includes('saida'));
                 const idxStatus = headers.findIndex(h => h.includes('status') || h.includes('situa'));
+                const idxMes = headers.findIndex(h => h.includes('mês') || h.includes('mes'));
 
                 const parsedDespesas = [];
                 for (let i = 1; i < json.length; i++) {
                     const row = json[i];
                     if (!row || row.length === 0) continue;
-                    const val = parseFloat(row[idxVal !== -1 ? idxVal : 4]) || 0;
+                    const val = parseFloat(row[idxVal !== -1 ? idxVal : 9]) || parseFloat(row[5]) || 0;
                     if (val === 0) continue;
 
                     parsedDespesas.push({
                         id: Date.now() + i,
-                        dataVencimento: row[idxVenc !== -1 ? idxVenc : 0] || '',
-                        dataPagamento: row[idxPag !== -1 ? idxPag : 1] || '',
+                        dataVencimento: formatDateVal(row[idxVenc !== -1 ? idxVenc : 1]),
+                        dataPagamento: formatDateVal(row[idxPag !== -1 ? idxPag : 10]),
+                        mes: idxMes !== -1 ? String(row[idxMes] || '') : '',
                         tipoDespesa: row[idxTipo !== -1 ? idxTipo : 2] || 'Geral',
                         descricao: row[idxDesc !== -1 ? idxDesc : 3] || 'Sem Descrição',
-                        status: row[idxStatus !== -1 ? idxStatus : 5] || 'Pago',
+                        status: row[idxStatus !== -1 ? idxStatus : 8] || 'Pago',
                         valor: val
                     });
                 }
@@ -1120,6 +1168,7 @@
             const dataToExport = despesas.map(d => ({
                 'Data Vencimento': d.dataVencimento,
                 'Data Pagamento': d.dataPagamento,
+                'Mês': d.mes,
                 'Tipo de Despesa': d.tipoDespesa,
                 'Descrição': d.descricao,
                 'Status': d.status,
