@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase Client para Sincronização em Nuvem em Tempo Real -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -44,6 +46,7 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #18181b; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .operator-readonly input, .operator-readonly select, .operator-readonly button:not(.nav-btn):not(#btn-sync-cloud):not(.tab-switch), .operator-readonly textarea { pointer-events: none; opacity: 0.6; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -96,27 +99,30 @@
 
                 <!-- MENU NAVEGAÇÃO -->
                 <nav class="hidden md:flex items-center gap-1 bg-dark-bg p-1 rounded-xl border border-dark-border">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral
                     </button>
-                    <button onclick="switchTab('lancardespesa')" id="nav-lancardespesa" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('lancardespesa')" id="nav-lancardespesa" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Lançar Despesa
                     </button>
-                    <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
                         <i data-lucide="pie-chart" class="w-4 h-4"></i> Contas a Pagar
                     </button>
-                    <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
                         <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Entradas
                     </button>
-                    <button onclick="switchTab('diretoria')" id="nav-diretoria" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('diretoria')" id="nav-diretoria" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
                         <i data-lucide="presentation" class="w-4 h-4"></i> Diretoria & Dash
                     </button>
-                    <button onclick="switchTab('usuarios')" id="nav-usuarios" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white hidden">
-                        <i data-lucide="users" class="w-4 h-4"></i> Usuários
+                    <button onclick="switchTab('usuarios')" id="nav-usuarios" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-brand-400 hover:text-white hidden">
+                        <i data-lucide="shield" class="w-4 h-4"></i> Painel Master
                     </button>
                 </nav>
 
                 <div class="flex items-center gap-3">
+                    <button id="btn-sync-cloud" onclick="manualSync()" class="p-2 text-emerald-400 hover:text-emerald-300 bg-dark-bg border border-dark-border rounded-lg transition shadow flex items-center gap-1.5 text-xs font-bold px-3" title="Sincronizar com Nuvem">
+                        <i data-lucide="cloud-sync" class="w-4 h-4"></i> <span id="sync-status-text">Sincronizado</span>
+                    </button>
                     <div class="text-right hidden sm:block">
                         <div id="user-display-email" class="text-sm font-medium text-white">administrativo@stanize.com.br</div>
                         <div id="user-display-role" class="text-xs text-brand-500 font-semibold uppercase">Master</div>
@@ -134,7 +140,7 @@
                 <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Contas a Pagar</button>
                 <button onclick="switchTab('entradas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Entradas</button>
                 <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria</button>
-                <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap hidden">Usuários</button>
+                <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-brand-400 whitespace-nowrap hidden">Painel Master</button>
             </div>
         </header>
 
@@ -144,8 +150,8 @@
             <!-- BARRA DE AÇÕES GLOBAL -->
             <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="w-full md:w-auto flex items-center gap-3 flex-wrap">
-                    <label class="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
-                        <i data-lucide="file-up" class="w-4 h-4"></i> Anexar Planilha
+                    <label id="wrapper-import-despesas" class="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+                        <i data-lucide="file-up" class="w-4 h-4"></i> Anexar Planilha (XLSX)
                         <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="hidden">
                     </label>
                     <button onclick="exportData()" class="bg-dark-bg hover:bg-dark-hover border border-dark-border text-zinc-300 hover:text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2">
@@ -173,19 +179,19 @@
             <!-- TAB 1: DASHBOARD / VISÃO GERAL -->
             <section id="tab-dashboard" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                    <div id="card-kpi-entradas" class="bg-dark-card border border-dark-border p-5 rounded-2xl">
                         <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Total Entradas</div>
                         <div id="kpi-entradas" class="text-2xl font-extrabold text-emerald-400">R$ 0,00</div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                    <div id="card-kpi-saidas" class="bg-dark-card border border-dark-border p-5 rounded-2xl">
                         <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Total Saídas</div>
                         <div id="kpi-saidas" class="text-2xl font-extrabold text-rose-400">R$ 0,00</div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                    <div id="card-kpi-saldo" class="bg-dark-card border border-dark-border p-5 rounded-2xl">
                         <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Saldo Líquido</div>
                         <div id="kpi-saldo" class="text-2xl font-extrabold text-white">R$ 0,00</div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                    <div id="card-kpi-status" class="bg-dark-card border border-dark-border p-5 rounded-2xl">
                         <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Status Contas</div>
                         <div class="flex items-center gap-4 mt-1">
                             <div><span class="text-[10px] text-zinc-400">Pagas</span><span id="kpi-pagas" class="text-sm font-bold text-brand-500 block">R$ 0,00</span></div>
@@ -196,13 +202,13 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="panel-fluxo-mensal" class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i> Fluxo Mensal (Entradas vs Saídas)
                         </h3>
                         <div class="h-72"><canvas id="chart-fluxo-mensal"></canvas></div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="panel-gastos-categoria" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Gastos por Tipo de Despesa
                         </h3>
@@ -211,7 +217,7 @@
                 </div>
             </section>
 
-            <!-- NOVA TAB: LANÇAR DESPESA -->
+            <!-- TAB LANÇAR DESPESA -->
             <section id="tab-lancardespesa" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto bg-dark-card border border-dark-border p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
                     <div class="flex items-center gap-3 border-b border-dark-border pb-4">
@@ -271,14 +277,14 @@
                 </div>
             </section>
 
-            <!-- TAB 2: CONTAS A PAGAR (APENAS CONTAS COM VALOR PAGO ZERADO, CLASSIFICADO POR VENCIMENTO) -->
+            <!-- TAB 2: CONTAS A PAGAR -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="panel-despesas-tipo" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Tipo de Despesa</h3>
                         <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-tipo"></canvas></div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="panel-despesas-desc" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Descrição</h3>
                         <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-desc"></canvas></div>
                     </div>
@@ -288,7 +294,7 @@
                     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-lg font-bold text-white">Contas a Pagar (Classificado por Data de Vencimento)</h2>
-                            <p class="text-xs text-zinc-400">Apenas despesas sem Valor Pago lançado (Coluna G zerada/vazia). Preencha o valor pago para dar baixa.</p>
+                            <p class="text-xs text-zinc-400">Apenas despesas sem Valor Pago lançado. Preencha o valor pago para dar baixa.</p>
                         </div>
 
                         <!-- SELETOR RÁPIDO DE PERÍODO -->
@@ -327,7 +333,7 @@
                         <table class="w-full text-left text-xs text-zinc-300">
                             <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
                                 <tr>
-                                    <th class="p-3 w-10 text-center">
+                                    <th class="p-3 w-10 text-center col-select-header">
                                         <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                                     </th>
                                     <th class="p-3">Código</th>
@@ -339,7 +345,7 @@
                                     <th class="p-3 text-right">Valor Pago (R$)</th>
                                     <th class="p-3">Vencimento</th>
                                     <th class="p-3 text-center">Status</th>
-                                    <th class="p-3 text-center">Ações</th>
+                                    <th class="p-3 text-center col-acoes-header">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="table-despesas-body" class="divide-y divide-dark-border"></tbody>
@@ -351,7 +357,7 @@
             <!-- TAB 3: ENTRADAS MANUAIS -->
             <section id="tab-entradas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
+                    <div id="panel-form-entrada" class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
                         <h3 id="form-entrada-title" class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
                             <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada
                         </h3>
@@ -389,7 +395,7 @@
                                         <th class="p-3">Data</th>
                                         <th class="p-3">Referência</th>
                                         <th class="p-3 text-right">Valor (R$)</th>
-                                        <th class="p-3 text-center">Ações</th>
+                                        <th class="p-3 text-center col-acoes-header">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table-entradas-body" class="divide-y divide-dark-border"></tbody>
@@ -399,7 +405,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO COMPLETO -->
+            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO -->
             <section id="tab-diretoria" class="tab-content hidden space-y-6">
                 <!-- TOP HEADER BAR COM SELETOR DE MÊS -->
                 <div class="bg-gradient-to-r from-zinc-900 via-dark-card to-brand-950/40 border border-brand-500/30 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
@@ -435,34 +441,26 @@
 
                 <!-- CARDS DE RESUMO EXECUTIVO DO MÊS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
+                    <div id="dir-card-entradas" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Receita (Entradas Mês)</div>
                         <div id="dir-kpi-entradas" class="text-2xl font-black text-emerald-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2 flex items-center gap-1">
-                            <i data-lucide="arrow-down-left" class="w-3.5 h-3.5 text-emerald-400"></i> Faturamento do mês
-                        </div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
+                    <div id="dir-card-saidas" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Custos (Saídas Mês)</div>
                         <div id="dir-kpi-saidas" class="text-2xl font-black text-rose-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2 flex items-center gap-1">
-                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-rose-400"></i> Despesas totais do mês
-                        </div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
+                    <div id="dir-card-resultado" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Resultado Líquido</div>
                         <div id="dir-kpi-resultado" class="text-2xl font-black text-white mt-1">R$ 0,00</div>
-                        <div id="dir-kpi-margem" class="text-[10px] font-bold text-zinc-400 mt-2">Margem: 0%</div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
+                    <div id="dir-card-pendente" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Contas em Aberto</div>
                         <div id="dir-kpi-pendente" class="text-2xl font-black text-amber-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2">Pendente de liquidação</div>
                     </div>
                 </div>
 
-                <!-- GRÁFICO COMPARATIVO ENTRADAS X SAÍDAS MÊS A MÊS (Navegável) -->
-                <div class="bg-dark-card border border-brand-500/30 p-6 rounded-2xl space-y-4">
+                <!-- GRÁFICO COMPARATIVO ENTRADAS X SAÍDAS MÊS A MÊS -->
+                <div id="dir-panel-comparativo" class="bg-dark-card border border-brand-500/30 p-6 rounded-2xl space-y-4">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-dark-border pb-4">
                         <div>
                             <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
@@ -476,84 +474,97 @@
 
                 <!-- GRÁFICOS DIRETORIA -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="dir-panel-balanco" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Balanço Geral (Créditos vs Custos)
                         </h3>
                         <div class="h-72"><canvas id="dir-chart-balanco"></canvas></div>
                     </div>
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <div id="dir-panel-tipo" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Distribuição dos Custos no Mês
                         </h3>
                         <div class="h-72 flex items-center justify-center"><canvas id="dir-chart-tipo"></canvas></div>
                     </div>
                 </div>
-
-                <!-- TABELA COMPARATIVA DE TIPOS DE DESPESA VS RECEITA -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center justify-between">
-                            <span>Impacto por Tipo de Despesa no Mês</span>
-                            <span class="text-xs text-zinc-400 font-normal">% referente às saídas</span>
-                        </h3>
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-xs text-zinc-300">
-                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                    <tr>
-                                        <th class="p-3">Tipo de Despesa</th>
-                                        <th class="p-3 text-right">Custo Total</th>
-                                        <th class="p-3 text-right">Participação %</th>
-                                        <th class="p-3 text-center">Status no Mês</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dir-table-tipos-body" class="divide-y divide-dark-border"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- RANKING TOP MAIORES DESPESAS DO MÊS -->
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i> Top 5 Maiores Gastos
-                        </h3>
-                        <div id="dir-top-gastos-list" class="space-y-3"></div>
-                    </div>
-                </div>
             </section>
 
-            <!-- TAB 5: GESTÃO DE USUÁRIOS -->
+            <!-- TAB 5: PAINEL MASTER (USUÁRIOS E CONTROLE DE VISIBILIDADE DO OPERADOR) -->
             <section id="tab-usuarios" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                            <i data-lucide="user-plus" class="w-4 h-4 text-brand-500"></i> Cadastrar Operador
-                        </h3>
-                        <form id="form-cad-user" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">E-mail</label>
-                                <input type="email" id="cad-user-email" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Senha</label>
-                                <input type="password" id="cad-user-pass" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
-                                Salvar Usuário
-                            </button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Usuários do Sistema</h3>
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-xs text-zinc-300">
-                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                    <tr><th class="p-3">E-mail</th><th class="p-3">Perfil</th><th class="p-3 text-center">Ações</th></tr>
-                                </thead>
-                                <tbody id="table-users-body" class="divide-y divide-dark-border"></tbody>
-                            </table>
+                <div class="bg-dark-card border border-brand-500/30 p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
+                    <div class="flex items-center gap-3 border-b border-dark-border pb-4">
+                        <div class="p-3 bg-brand-500/10 text-brand-400 rounded-xl border border-brand-500/20">
+                            <i data-lucide="shield" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Painel de Controle Master (Visibilidade & Usuários)</h2>
+                            <p class="text-xs text-zinc-400">Gerencie operadores e escolha quais informações e abas o usuário operador pode ver no sistema.</p>
                         </div>
                     </div>
+
+                    <!-- CONTROLE DE VISIBILIDADE -->
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4 text-brand-400"></i> Controle de Visibilidade das Informações para o Operador
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="visibility-toggles-container">
+                            <!-- Toggles gerados via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="border-t border-dark-border pt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-dark-bg border border-dark-border p-6 rounded-xl space-y-4">
+                            <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4 text-brand-500"></i> Cadastrar Operador
+                            </h3>
+                            <form id="form-cad-user" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-400 mb-1">E-mail</label>
+                                    <input type="email" id="cad-user-email" required class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-400 mb-1">Senha</label>
+                                    <input type="password" id="cad-user-pass" required class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                </div>
+                                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                                    Salvar Usuário
+                                </button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 bg-dark-bg border border-dark-border p-6 rounded-xl space-y-4">
+                            <h3 class="text-sm font-semibold text-zinc-200 uppercase">Usuários do Sistema</h3>
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full text-left text-xs text-zinc-300">
+                                    <thead class="bg-dark-card text-zinc-400 uppercase font-semibold border-b border-dark-border">
+                                        <tr><th class="p-3">E-mail</th><th class="p-3">Perfil</th><th class="p-3 text-center">Ações</th></tr>
+                                    </thead>
+                                    <tbody id="table-users-body" class="divide-y divide-dark-border"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONFIGURAÇÃO SUPABASE -->
+                    <div class="border-t border-dark-border pt-6 space-y-4">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="cloud" class="w-4 h-4 text-brand-400"></i> Sincronização em Nuvem Multi-Computador (Supabase)
+                        </h3>
+                        <p class="text-xs text-zinc-400">Para salvar e ver as atualizações em qualquer computador (Master ou Operador), insira suas credenciais do Supabase abaixo:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Supabase URL</label>
+                                <input type="text" id="supabase-url-input" placeholder="https://xxxx.supabase.co" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Supabase Anon Key</label>
+                                <input type="password" id="supabase-key-input" placeholder="eyJhbGciOi..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                        <button onclick="saveSupabaseConfig()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-600/20">
+                            Salvar Credenciais de Nuvem e Conectar
+                        </button>
+                    </div>
+
                 </div>
             </section>
 
@@ -629,6 +640,60 @@
         let currentUser = null;
         let despesas = JSON.parse(localStorage.getItem('stanize_despesas')) || [];
         let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
+
+        // Configurações de visibilidade controladas pelo Master para o Operador
+        let operatorVisibility = JSON.parse(localStorage.getItem('stanize_operator_visibility')) || {
+            'tab-dashboard': true,
+            'card-kpi-entradas': true,
+            'card-kpi-saidas': true,
+            'card-kpi-saldo': true,
+            'card-kpi-status': true,
+            'panel-fluxo-mensal': true,
+            'panel-gastos-categoria': true,
+            'tab-lancardespesa': true,
+            'tab-despesas': true,
+            'panel-despesas-tipo': true,
+            'panel-despesas-desc': true,
+            'tab-entradas': true,
+            'panel-form-entrada': true,
+            'tab-diretoria': true,
+            'dir-card-entradas': true,
+            'dir-card-saidas': true,
+            'dir-card-resultado': true,
+            'dir-card-pendente': true,
+            'dir-panel-comparativo': true,
+            'dir-panel-balanco': true,
+            'dir-panel-tipo': true
+        };
+
+        const visibilityLabels = {
+            'tab-dashboard': 'Aba Visão Geral',
+            'card-kpi-entradas': 'KPI: Total Entradas',
+            'card-kpi-saidas': 'KPI: Total Saídas',
+            'card-kpi-saldo': 'KPI: Saldo Líquido',
+            'card-kpi-status': 'KPI: Status Contas',
+            'panel-fluxo-mensal': 'Gráfico Fluxo Mensal',
+            'panel-gastos-categoria': 'Gráfico Gastos por Categoria',
+            'tab-lancardespesa': 'Aba Lançar Despesa',
+            'tab-despesas': 'Aba Contas a Pagar',
+            'panel-despesas-tipo': 'Gráfico Despesas por Tipo',
+            'panel-despesas-desc': 'Gráfico Despesas por Descrição',
+            'tab-entradas': 'Aba Entradas',
+            'panel-form-entrada': 'Formulário Lançar Entrada',
+            'tab-diretoria': 'Aba Diretoria & Dash',
+            'dir-card-entradas': 'Diretoria: Receita Mês',
+            'dir-card-saidas': 'Diretoria: Custos Mês',
+            'dir-card-resultado': 'Diretoria: Resultado Líquido',
+            'dir-card-pendente': 'Diretoria: Contas em Aberto',
+            'dir-panel-comparativo': 'Diretoria: Gráfico Comparativo',
+            'dir-panel-balanco': 'Diretoria: Gráfico Balanço',
+            'dir-panel-tipo': 'Diretoria: Gráfico Distribuição'
+        };
+
+        // Supabase Cloud Sync config
+        let supabaseClient = null;
+        let supabaseConfig = JSON.parse(localStorage.getItem('stanize_supabase_config')) || { url: '', key: '' };
+
         let activeCategoryFilter = null;
         let selectedDespesasIds = new Set();
         let quickPeriodFilter = 'all';
@@ -671,6 +736,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            initSupabaseFromConfig();
 
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -687,9 +753,13 @@
                 }
             });
 
-            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA (Ordem Colunas A-H)
+            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA
             document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (currentUser && currentUser.role !== 'MASTER') {
+                    alert('Acesso negado: Apenas o usuário Master pode cadastrar despesas.');
+                    return;
+                }
                 const codigo = parseInt(document.getElementById('novo-despesa-codigo').value) || 1;
                 const lanc = document.getElementById('novo-despesa-lanc').value;
                 const tipo = document.getElementById('novo-despesa-tipo').value.trim();
@@ -719,7 +789,7 @@
                 };
 
                 despesas.push(novaDespesa);
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 document.getElementById('form-nova-despesa').reset();
 
                 alert('Despesa cadastrada com sucesso!');
@@ -729,6 +799,7 @@
 
             document.getElementById('form-entrada').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (currentUser && currentUser.role !== 'MASTER') return;
                 const editId = document.getElementById('entrada-edit-id').value;
                 const valor = parseFloat(document.getElementById('entrada-valor').value);
                 const descricao = document.getElementById('entrada-descricao').value.trim();
@@ -743,13 +814,14 @@
                     entradas.push({ id: Date.now(), valor, descricao, data });
                 }
 
-                localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                saveAndSyncData();
                 cancelEditEntrada();
                 updateAll();
             });
 
             document.getElementById('form-edit-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (currentUser && currentUser.role !== 'MASTER') return;
                 const id = document.getElementById('edit-despesa-id').value;
                 const idx = despesas.findIndex(d => d.id == id);
                 if (idx !== -1) {
@@ -765,7 +837,7 @@
                     despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
                     despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
 
-                    localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                    saveAndSyncData();
                     closeEditDespesaModal();
                     updateAll();
                 }
@@ -773,6 +845,7 @@
 
             document.getElementById('form-cad-user').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (currentUser && currentUser.role !== 'MASTER') return;
                 const email = document.getElementById('cad-user-email').value.trim();
                 const pass = document.getElementById('cad-user-pass').value.trim();
                 if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
@@ -788,6 +861,79 @@
             document.getElementById('excel-file-input').addEventListener('change', handleFileUpload);
         });
 
+        function initSupabaseFromConfig() {
+            if (supabaseConfig.url && supabaseConfig.key) {
+                try {
+                    supabaseClient = supabase.createClient(supabaseConfig.url, supabaseConfig.key);
+                    document.getElementById('supabase-url-input').value = supabaseConfig.url;
+                    document.getElementById('supabase-key-input').value = supabaseConfig.key;
+                    document.getElementById('sync-status-text').textContent = "Nuvem Conectada";
+                    fetchCloudData();
+                } catch(err) {
+                    console.error("Erro ao inicializar Supabase:", err);
+                    document.getElementById('sync-status-text').textContent = "Erro Nuvem";
+                }
+            }
+        }
+
+        function saveSupabaseConfig() {
+            const url = document.getElementById('supabase-url-input').value.trim();
+            const key = document.getElementById('supabase-key-input').value.trim();
+            if (!url || !key) {
+                alert('Preencha URL e Key do Supabase!');
+                return;
+            }
+            supabaseConfig = { url, key };
+            localStorage.setItem('stanize_supabase_config', JSON.stringify(supabaseConfig));
+            initSupabaseFromConfig();
+            alert('Credenciais salvas com sucesso! Sistema conectado à nuvem.');
+        }
+
+        async function saveAndSyncData() {
+            localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+            localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+
+            if (supabaseClient) {
+                try {
+                    document.getElementById('sync-status-text').textContent = "Salvando...";
+                    await supabaseClient.from('stanize_data').upsert({
+                        id: 1,
+                        despesas: despesas,
+                        entradas: entradas,
+                        updated_at: new Date()
+                    });
+                    document.getElementById('sync-status-text').textContent = "Nuvem Conectada";
+                } catch(err) {
+                    console.error("Erro ao sincronizar com nuvem:", err);
+                    document.getElementById('sync-status-text').textContent = "Erro Nuvem";
+                }
+            }
+        }
+
+        async function fetchCloudData() {
+            if (!supabaseClient) return;
+            try {
+                document.getElementById('sync-status-text').textContent = "Sincronizando...";
+                const { data, error } = await supabaseClient.from('stanize_data').select('*').eq('id', 1).single();
+                if (data && !error) {
+                    if (data.despesas) despesas = data.despesas;
+                    if (data.entradas) entradas = data.entradas;
+                    localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                    localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                    updateAll();
+                }
+                document.getElementById('sync-status-text').textContent = "Nuvem Conectada";
+            } catch(err) {
+                console.error("Erro ao buscar dados da nuvem:", err);
+                document.getElementById('sync-status-text').textContent = "Nuvem Conectada";
+            }
+        }
+
+        function manualSync() {
+            fetchCloudData();
+            alert('Sincronização manual executada com sucesso!');
+        }
+
         function initApp() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
@@ -797,6 +943,13 @@
             if (currentUser.role === 'MASTER') {
                 document.getElementById('nav-usuarios').classList.remove('hidden');
                 document.getElementById('mob-nav-usuarios').classList.remove('hidden');
+                document.body.classList.remove('operator-readonly');
+                renderAdminVisibilityPanel();
+            } else {
+                document.getElementById('nav-usuarios').classList.add('hidden');
+                document.getElementById('mob-nav-usuarios').classList.add('hidden');
+                document.body.classList.add('operator-readonly');
+                applyOperatorVisibility();
             }
             renderUsers();
             updateAll();
@@ -824,6 +977,45 @@
             }
             if (tabId === 'diretoria') {
                 updateDiretoria();
+            }
+            if (currentUser && currentUser.role !== 'MASTER') {
+                applyOperatorVisibility();
+            }
+        }
+
+        function renderAdminVisibilityPanel() {
+            const container = document.getElementById('visibility-toggles-container');
+            container.innerHTML = '';
+            for (const [key, label] of Object.entries(visibilityLabels)) {
+                const isChecked = operatorVisibility[key] !== false ? 'checked' : '';
+                container.innerHTML += `
+                    <div class="bg-dark-bg border border-dark-border p-4 rounded-xl flex items-center justify-between">
+                        <span class="text-xs font-semibold text-zinc-300">${label}</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" ${isChecked} onchange="toggleOperatorVisibility('${key}', this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600"></div>
+                        </label>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleOperatorVisibility(key, isVisible) {
+            operatorVisibility[key] = isVisible;
+            localStorage.setItem('stanize_operator_visibility', JSON.stringify(operatorVisibility));
+        }
+
+        function applyOperatorVisibility() {
+            if (!currentUser || currentUser.role === 'MASTER') return;
+            for (const [key, isVisible] of Object.entries(operatorVisibility)) {
+                const el = document.getElementById(key);
+                if (el) {
+                    if (isVisible) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
             }
         }
 
@@ -928,6 +1120,13 @@
             renderTables();
             renderCharts(fEntradas, fDespesas);
             updateDiretoria();
+
+            if (currentUser && currentUser.role !== 'MASTER') {
+                applyOperatorVisibility();
+                const importDesp = document.getElementById('wrapper-import-despesas');
+                if (importDesp) importDesp.classList.add('hidden');
+                document.querySelectorAll('.col-acoes-header, .col-select-header').forEach(el => el.classList.add('hidden'));
+            }
         }
 
         function clearCategoryFilter() {
@@ -946,8 +1145,8 @@
         }
 
         function toggleSelectAll(masterCheckbox) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             const { fDespesas } = getFilteredData();
-            // Apenas contas a pagar (Valor Pago zerado/vazio)
             const contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
             if (masterCheckbox.checked) {
                 contasPagar.forEach(d => selectedDespesasIds.add(d.id));
@@ -958,6 +1157,7 @@
         }
 
         function toggleSelectDespesa(id, checkbox) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             if (checkbox.checked) {
                 selectedDespesasIds.add(id);
             } else {
@@ -967,6 +1167,7 @@
         }
 
         function updateBulkBar() {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             const bar = document.getElementById('bulk-actions-bar');
             const countSpan = document.getElementById('selected-count');
             countSpan.textContent = selectedDespesasIds.size;
@@ -978,32 +1179,39 @@
         }
 
         function deleteSelectedDespesas() {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             if (selectedDespesasIds.size === 0) return;
             if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens selecionados?`)) {
                 despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
                 selectedDespesasIds.clear();
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 updateAll();
             }
         }
 
         function deleteAllDespesas() {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             if (confirm('ATENÇÃO: Deseja realmente excluir TODAS as despesas cadastradas no sistema? Esta ação não pode ser desfeita.')) {
                 despesas = [];
                 selectedDespesasIds.clear();
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 updateAll();
             }
         }
 
         function updateValorPagoDirectly(id, inputElement) {
+            if (currentUser && currentUser.role !== 'MASTER') {
+                inputElement.value = inputElement.defaultValue;
+                alert('Acesso negado: Apenas o usuário Master pode alterar dados.');
+                return;
+            }
             const valPago = parseFloat(inputElement.value) || 0;
             const idx = despesas.findIndex(d => d.id == id);
             if (idx !== -1) {
                 despesas[idx].valorPago = valPago;
                 despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
 
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 updateAll();
             }
         }
@@ -1015,10 +1223,8 @@
             const tbodyDespesas = document.getElementById('table-despesas-body');
             tbodyDespesas.innerHTML = '';
 
-            // REGRA: Na aba contas a pagar, ficam APENAS as despesas que não tem valor lançado na coluna G (Valor Pago)
             let contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
 
-            // REGRA: Classificado por data de vencimento (crescente)
             contasPagar.sort((a, b) => {
                 const dtA = a.dataVencimento || '9999-12-31';
                 const dtB = b.dataVencimento || '9999-12-31';
@@ -1031,6 +1237,8 @@
                 String(d.codigo || '').toLowerCase().includes(search)
             );
 
+            const isMaster = currentUser && currentUser.role === 'MASTER';
+
             if (filteredDesp.length === 0) {
                 tbodyDespesas.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-zinc-500">Nenhuma conta a pagar pendente.</td></tr>`;
             } else {
@@ -1038,11 +1246,13 @@
                     const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
                     const catColor = getCategoryColor(d.tipoDespesa);
 
+                    const checkboxTd = isMaster ? `<td class="p-3 text-center"><input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer"></td>` : '';
+                    const valorPagoInput = isMaster ? `<input type="number" step="0.01" value="${d.valorPago || ''}" onchange="updateValorPagoDirectly(${d.id}, this)" placeholder="0.00" class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">` : `<span>${formatCurrency(d.valorPago || 0)}</span>`;
+                    const acoesTd = isMaster ? `<td class="p-3 text-center"><div class="flex items-center justify-center gap-2"><button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>` : '';
+
                     tbodyDespesas.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 text-center">
-                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
-                            </td>
+                            ${checkboxTd}
                             <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
                             <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
                             <td class="p-3 font-medium text-white flex items-center gap-2">
@@ -1052,47 +1262,31 @@
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
                             <td class="p-3">${d.mes || '-'}</td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
-                            
-                            <td class="p-3 text-right">
-                                <input type="number" step="0.01" value="${d.valorPago || ''}" 
-                                       onchange="updateValorPagoDirectly(${d.id}, this)" 
-                                       placeholder="0.00" 
-                                       class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </td>
-
+                            <td class="p-3 text-right">${valorPagoInput}</td>
                             <td class="p-3 font-semibold text-amber-300">${formatDateBR(d.dataVencimento)}</td>
                             <td class="p-3 text-center">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                     Pendente
                                 </span>
                             </td>
-                            <td class="p-3 text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                    <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                </div>
-                            </td>
+                            ${acoesTd}
                         </tr>
                     `;
                 });
             }
 
-            updateBulkBar();
+            if(isMaster) updateBulkBar();
 
             const tbodyEntradas = document.getElementById('table-entradas-body');
             tbodyEntradas.innerHTML = '';
             fEntradas.forEach(e => {
+                const acoesEnt = isMaster ? `<td class="p-3 text-center"><div class="flex items-center justify-center gap-2"><button onclick="startEditEntrada(${e.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>` : '';
                 tbodyEntradas.innerHTML += `
                     <tr class="hover:bg-dark-hover/50 transition">
                         <td class="p-3">${formatDateBR(e.data)}</td>
                         <td class="p-3 font-medium text-white">${e.descricao}</td>
                         <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
-                        <td class="p-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="startEditEntrada(${e.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                <button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </td>
+                        ${acoesEnt}
                     </tr>
                 `;
             });
@@ -1100,6 +1294,7 @@
         }
 
         function openEditDespesaModal(id) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             const d = despesas.find(item => item.id == id);
             if (!d) return;
 
@@ -1120,15 +1315,17 @@
         }
 
         function deleteDespesa(id) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
                 despesas = despesas.filter(d => d.id != id);
                 selectedDespesasIds.delete(id);
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 updateAll();
             }
         }
 
         function startEditEntrada(id) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             const e = entradas.find(item => item.id == id);
             if (!e) return;
 
@@ -1151,9 +1348,10 @@
         }
 
         function deleteEntrada(id) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             if (confirm('Tem certeza de que deseja excluir esta entrada?')) {
                 entradas = entradas.filter(e => e.id !== id);
-                localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                saveAndSyncData();
                 updateAll();
             }
         }
@@ -1309,7 +1507,6 @@
             const totalEntradas = dEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
             const totalSaidas = dDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
             const resultado = totalEntradas - totalSaidas;
-            const margem = totalEntradas > 0 ? ((resultado / totalEntradas) * 100).toFixed(1) : '0.0';
 
             const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + d.valor, 0);
             const pendentes = totalSaidas - pagas;
@@ -1318,7 +1515,6 @@
             document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
             document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
             document.getElementById('dir-kpi-resultado').className = `text-2xl font-black mt-1 ${resultado >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-            document.getElementById('dir-kpi-margem').textContent = `Margem Operacional: ${margem}%`;
             document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
 
             if (charts.dirCompMensal) charts.dirCompMensal.destroy();
@@ -1383,57 +1579,6 @@
                     plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } }
                 }
             });
-
-            const tbodyTipos = document.getElementById('dir-table-tipos-body');
-            tbodyTipos.innerHTML = '';
-
-            if (dirTipoKeys.length === 0) {
-                tbodyTipos.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-zinc-500">Nenhuma despesa registrada para o mês selecionado.</td></tr>`;
-            } else {
-                dirTipoKeys.forEach(tipo => {
-                    const val = tipoMap[tipo];
-                    const part = totalSaidas > 0 ? ((val / totalSaidas) * 100).toFixed(1) : '0.0';
-                    const catColor = getCategoryColor(tipo);
-                    tbodyTipos.innerHTML += `
-                        <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 font-medium text-white flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${catColor}"></span>
-                                ${tipo}
-                            </td>
-                            <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(val)}</td>
-                            <td class="p-3 text-right font-semibold text-zinc-300">${part}%</td>
-                            <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${val > (totalSaidas * 0.3) ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-brand-500/10 text-brand-400 border border-brand-500/20'}">
-                                    ${val > (totalSaidas * 0.3) ? 'Alto Impacto' : 'Normal'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            const sortedDespesas = [...dDespesas].sort((a, b) => b.valor - a.valor).slice(0, 5);
-            const containerTop = document.getElementById('dir-top-gastos-list');
-            containerTop.innerHTML = '';
-
-            if (sortedDespesas.length === 0) {
-                containerTop.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">Sem registros no período</div>`;
-            } else {
-                sortedDespesas.forEach((item, idx) => {
-                    containerTop.innerHTML += `
-                        <div class="flex items-center justify-between p-3 bg-dark-bg border border-dark-border rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full bg-brand-600/20 text-brand-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
-                                <div>
-                                    <div class="text-xs font-bold text-white">${item.descricao || 'Sem descrição'}</div>
-                                    <div class="text-[10px] text-zinc-400">${item.tipoDespesa || 'Geral'}</div>
-                                </div>
-                            </div>
-                            <div class="text-xs font-black text-rose-400">${formatCurrency(item.valor)}</div>
-                        </div>
-                    `;
-                });
-            }
         }
 
         function formatDateVal(val) {
@@ -1468,6 +1613,7 @@
         }
 
         function handleFileUpload(e) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -1486,8 +1632,6 @@
                     const row = json[i];
                     if (!row || row.length === 0) continue;
 
-                    // Colunas A a H:
-                    // A: Codigo, B: Lançamento, C: Tipo Despesa, D: Descrição, E: Mês, F: Valor Total, G: Valor Pago, H: Vencimento
                     const codigo = parseInt(row[0]) || i;
                     const valTotal = parseFloat(row[5]) || 0;
                     const valPago = parseFloat(row[6]) || 0;
@@ -1513,7 +1657,6 @@
                         status: valPago > 0 ? 'Pago' : 'Pendente'
                     };
 
-                    // REGRA: Se houver o mesmo código na Coluna A, o sistema não duplica, apenas atualiza o valor pago (Coluna G)
                     const indexExistente = despesas.findIndex(d => Number(d.codigo) === Number(itemImportado.codigo));
 
                     if (indexExistente !== -1) {
@@ -1531,7 +1674,7 @@
                     }
                 }
 
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                saveAndSyncData();
                 alert(`Planilha importada!
 • ${novos} novos itens.
 • ${atualizados} itens atualizados pelo código.`);
@@ -1541,7 +1684,6 @@
         }
 
         function exportData() {
-            // SEQUÊNCIA EXATA DA IMAGEM: Codigo | Lançamento | Tipo Despesa | Descrição | Mês | Valor Total | Valor Pago | Vencimento
             const dataToExport = despesas.length ? despesas.map(d => ({
                 'Codigo': d.codigo || 1,
                 'Lançamento': d.dataLancamento ? formatDateBR(d.dataLancamento) : '',
@@ -1569,13 +1711,16 @@
 
         function renderUsers() {
             const tbody = document.getElementById('table-users-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             users.forEach((u, idx) => {
+                const isMaster = currentUser && currentUser.role === 'MASTER';
+                const deleteBtn = (isMaster && u.role !== 'MASTER') ? `<button onclick="deleteUser(${idx})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : '-';
                 tbody.innerHTML += `
                     <tr class="hover:bg-dark-hover/50 transition">
                         <td class="p-3 font-medium text-white">${u.email}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'MASTER' ? 'bg-brand-500/20 text-brand-400' : 'bg-zinc-800 text-zinc-300'}">${u.role}</span></td>
-                        <td class="p-3 text-center">${u.role !== 'MASTER' ? `<button onclick="deleteUser(${idx})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : '-'}</td>
+                        <td class="p-3 text-center">${deleteBtn}</td>
                     </tr>
                 `;
             });
@@ -1583,6 +1728,7 @@
         }
 
         function deleteUser(idx) {
+            if (currentUser && currentUser.role !== 'MASTER') return;
             users.splice(idx, 1);
             localStorage.setItem('stanize_users', JSON.stringify(users));
             renderUsers();
