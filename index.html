@@ -99,8 +99,11 @@
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral
                     </button>
+                    <button onclick="switchTab('lancardespesa')" id="nav-lancardespesa" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Lançar Despesa
+                    </button>
                     <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
-                        <i data-lucide="pie-chart" class="w-4 h-4"></i> Despesas & Tipos
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i> Contas a Pagar
                     </button>
                     <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
                         <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Entradas
@@ -115,7 +118,7 @@
 
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden sm:block">
-                        <div id="user-display-email" class="text-sm font-medium text-white">admin@stanize.com.br</div>
+                        <div id="user-display-email" class="text-sm font-medium text-white">administrativo@stanize.com.br</div>
                         <div id="user-display-role" class="text-xs text-brand-500 font-semibold uppercase">Master</div>
                     </div>
                     <button onclick="logout()" class="p-2 text-zinc-400 hover:text-rose-400 bg-dark-bg border border-dark-border rounded-lg transition" title="Sair">
@@ -127,7 +130,8 @@
             <!-- MENU MOBILE -->
             <div class="md:hidden flex border-t border-dark-border overflow-x-auto p-2 gap-2 custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-dark-card text-white whitespace-nowrap">Visão Geral</button>
-                <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Despesas</button>
+                <button onclick="switchTab('lancardespesa')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Lançar Despesa</button>
+                <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Contas a Pagar</button>
                 <button onclick="switchTab('entradas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Entradas</button>
                 <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria</button>
                 <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap hidden">Usuários</button>
@@ -207,7 +211,61 @@
                 </div>
             </section>
 
-            <!-- TAB 2: DESPESAS & TIPOS -->
+            <!-- NOVA TAB: LANÇAR DESPESA -->
+            <section id="tab-lancardespesa" class="tab-content hidden space-y-6">
+                <div class="max-w-2xl mx-auto bg-dark-card border border-dark-border p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
+                    <div class="flex items-center gap-3 border-b border-dark-border pb-4">
+                        <div class="p-2.5 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+                            <i data-lucide="minus-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Lançar Nova Despesa</h2>
+                            <p class="text-xs text-zinc-400">Cadastre a conta a pagar. O status mudará para PAGO automaticamente ao inserir o valor correto pago.</p>
+                        </div>
+                    </div>
+
+                    <form id="form-nova-despesa" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tipo de Despesa / Categoria *</label>
+                                <input type="text" id="novo-despesa-tipo" required placeholder="Ex: Pro-Labore, Aluguel, Fornecedor..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Descrição / Fornecedor *</label>
+                                <input type="text" id="novo-despesa-desc" required placeholder="Ex: Pagamento referente ao serviço..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Lançado (R$) *</label>
+                                <input type="number" step="0.01" id="novo-despesa-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data de Vencimento *</label>
+                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data de Pagamento (Opcional)</label>
+                                <input type="date" id="novo-despesa-pag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Já Pago (R$) <span class="text-zinc-500 font-normal">(Se igual ao valor lançado, marcará PAGO automaticamente)</span></label>
+                            <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar Despesa no Sistema
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- TAB 2: CONTAS A PAGAR (COM COLUNA DE VALOR PAGO E FILTRO TEMPORAL RAPIDO) -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
@@ -221,19 +279,41 @@
                 </div>
 
                 <div class="bg-dark-card border border-dark-border rounded-2xl p-6 space-y-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div>
-                            <h2 class="text-lg font-bold text-white">Detalhamento Completo de Saídas</h2>
-                            <p class="text-xs text-zinc-400">Selecione vários itens para exclusão em massa ou gerencie individualmente</p>
+                            <h2 class="text-lg font-bold text-white">Detalhamento e Gestão de Contas a Pagar</h2>
+                            <p class="text-xs text-zinc-400">Ao preencher a coluna "Valor Pago" igual ao "Valor Lançado", a conta é baixada automaticamente.</p>
                         </div>
-                        <div class="flex items-center gap-3 w-full sm:w-auto">
-                            <button onclick="deleteSelectedDespesas()" id="btn-delete-selected" class="hidden bg-rose-600/20 border border-rose-500/30 hover:bg-rose-600 text-rose-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir Selecionadas (<span id="selected-count">0</span>)
-                            </button>
-                            <div class="relative w-full sm:w-64">
-                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-zinc-500"></i>
-                                <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+
+                        <!-- SELETOR RÁPIDO DE PERÍODO (DIAS, SEMANA, MÊS, ANO) -->
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <div class="flex items-center gap-1 bg-dark-bg border border-dark-border p-1 rounded-xl">
+                                <button onclick="setQuickPeriodFilter('all')" id="btn-period-all" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-dark-card">Todas</button>
+                                <button onclick="setQuickPeriodFilter('day')" id="btn-period-day" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Hoje</button>
+                                <button onclick="setQuickPeriodFilter('week')" id="btn-period-week" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Esta Semana</button>
+                                <button onclick="setQuickPeriodFilter('month')" id="btn-period-month" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Mês</button>
+                                <button onclick="setQuickPeriodFilter('year')" id="btn-period-year" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Ano</button>
                             </div>
+                            <div class="relative w-full sm:w-48">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-zinc-500"></i>
+                                <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BARRA FLUTUANTE DE AÇÕES EM MASSA -->
+                    <div id="bulk-actions-bar" class="hidden bg-dark-bg border border-brand-500/40 p-3 rounded-xl flex items-center justify-between gap-3 transition">
+                        <div class="text-xs text-brand-400 font-bold flex items-center gap-2">
+                            <i data-lucide="check-square" class="w-4 h-4"></i>
+                            <span id="selected-count">0</span> itens selecionados
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="deleteSelectedDespesas()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir Selecionados
+                            </button>
+                            <button onclick="deleteAllDespesas()" class="bg-zinc-800 hover:bg-zinc-700 text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-500/20">
+                                <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> Excluir TODOS
+                            </button>
                         </div>
                     </div>
 
@@ -246,11 +326,11 @@
                                     </th>
                                     <th class="p-3">Vencimento</th>
                                     <th class="p-3">Pagamento</th>
-                                    <th class="p-3">Mês</th>
                                     <th class="p-3">Tipo de Despesa</th>
                                     <th class="p-3">Descrição</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3 text-right">Valor (R$)</th>
+                                    <th class="p-3 text-right">Valor Lançado</th>
+                                    <th class="p-3 text-right">Valor Pago (R$)</th>
+                                    <th class="p-3 text-center">Status</th>
                                     <th class="p-3 text-center">Ações</th>
                                 </tr>
                             </thead>
@@ -373,11 +453,24 @@
                     </div>
                 </div>
 
+                <!-- GRÁFICO COMPARATIVO ENTRADAS X SAÍDAS MÊS A MÊS (Navegável) -->
+                <div class="bg-dark-card border border-brand-500/30 p-6 rounded-2xl space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-dark-border pb-4">
+                        <div>
+                            <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Comparativo Mensal: Entradas vs Saídas
+                            </h3>
+                            <p class="text-xs text-zinc-400">Visualização dinâmica consolidada ou focada mês a mês</p>
+                        </div>
+                    </div>
+                    <div class="h-80"><canvas id="dir-chart-comparativo-mensal"></canvas></div>
+                </div>
+
                 <!-- GRÁFICOS DIRETORIA -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
                         <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Comparativo Entradas vs Saídas do Mês
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Balanço Geral (Créditos vs Custos)
                         </h3>
                         <div class="h-72"><canvas id="dir-chart-balanco"></canvas></div>
                     </div>
@@ -494,15 +587,12 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor (R$)</label>
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Lançado (R$)</label>
                         <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Status</label>
-                        <select id="edit-despesa-status" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                            <option value="Pago">Pago</option>
-                            <option value="Pendente">Pendente</option>
-                        </select>
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$)</label>
+                        <input type="number" step="0.01" id="edit-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
@@ -527,8 +617,39 @@
         let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
         let activeCategoryFilter = null;
         let selectedDespesasIds = new Set();
+        let quickPeriodFilter = 'all';
 
         let charts = {};
+
+        // CORES ÚNICAS E EXCLUSIVAS PARA CATEGORIAS
+        const COLOR_PALETTE = [
+            '#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
+            '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#f97316', 
+            '#6366f1', '#84cc16', '#d946ef', '#0284c7', '#eab308', 
+            '#a855f7', '#10b981', '#f43f5e', '#64748b', '#059669'
+        ];
+
+        let categoryColorMap = {};
+
+        function getCategoryColor(category) {
+            const catKey = String(category || 'Outros').trim();
+            if (!categoryColorMap[catKey]) {
+                const usedColors = Object.values(categoryColorMap);
+                const availableColor = COLOR_PALETTE.find(color => !usedColors.includes(color));
+                if (availableColor) {
+                    categoryColorMap[catKey] = availableColor;
+                } else {
+                    const hash = Array.from(catKey).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    const hue = (hash * 137) % 360;
+                    categoryColorMap[catKey] = `hsl(${hue}, 70%, 55%)`;
+                }
+            }
+            return categoryColorMap[catKey];
+        }
+
+        function getColorsForCategories(categoriesArray) {
+            return categoriesArray.map(cat => getCategoryColor(cat));
+        }
 
         const monthMap = {
             'janeiro': 0, 'fevereiro': 1, 'março': 2, 'marco': 2, 'abril': 3, 'maio': 4, 'junho': 5,
@@ -551,6 +672,48 @@
                     err.textContent = "E-mail ou senha incorretos!";
                     err.classList.remove('hidden');
                 }
+            });
+
+            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA
+            document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const tipo = document.getElementById('novo-despesa-tipo').value.trim();
+                const desc = document.getElementById('novo-despesa-desc').value.trim();
+                const valorLancado = parseFloat(document.getElementById('novo-despesa-valor').value) || 0;
+                const venc = document.getElementById('novo-despesa-venc').value;
+                const pag = document.getElementById('novo-despesa-pag').value;
+                const valorPagoInput = parseFloat(document.getElementById('novo-despesa-valorpago').value) || 0;
+
+                // REGRA DE AUTOMACAO: Se o valor pago for exatamente igual ou superior ao valor lançado, o status é PAGO
+                const isPago = valorPagoInput > 0 && valorPagoInput >= valorLancado;
+                const statusCalculado = isPago ? 'Pago' : 'Pendente';
+
+                let monthName = '';
+                if (venc) {
+                    const dt = new Date(venc + 'T00:00:00');
+                    const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    monthName = months[dt.getMonth()];
+                }
+
+                const novaDespesa = {
+                    id: Date.now(),
+                    dataVencimento: venc,
+                    dataPagamento: pag || (isPago ? venc : ''),
+                    mes: monthName,
+                    tipoDespesa: tipo,
+                    descricao: desc,
+                    valor: valorLancado,
+                    valorPago: valorPagoInput,
+                    status: statusCalculado
+                };
+
+                despesas.push(novaDespesa);
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                document.getElementById('form-nova-despesa').reset();
+
+                alert('Despesa cadastrada com sucesso!');
+                switchTab('despesas');
+                updateAll();
             });
 
             document.getElementById('form-entrada').addEventListener('submit', (e) => {
@@ -579,12 +742,17 @@
                 const id = document.getElementById('edit-despesa-id').value;
                 const idx = despesas.findIndex(d => d.id == id);
                 if (idx !== -1) {
+                    const valLancado = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
+                    const valPago = parseFloat(document.getElementById('edit-despesa-valorpago').value) || 0;
+                    const isPago = valPago > 0 && valPago >= valLancado;
+
                     despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
                     despesas[idx].dataPagamento = document.getElementById('edit-despesa-pag').value;
                     despesas[idx].tipoDespesa = document.getElementById('edit-despesa-tipo').value.trim();
                     despesas[idx].descricao = document.getElementById('edit-despesa-desc').value.trim();
-                    despesas[idx].valor = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
-                    despesas[idx].status = document.getElementById('edit-despesa-status').value;
+                    despesas[idx].valor = valLancado;
+                    despesas[idx].valorPago = valPago;
+                    despesas[idx].status = isPago ? 'Pago' : 'Pendente';
 
                     localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                     closeEditDespesaModal();
@@ -648,6 +816,21 @@
             }
         }
 
+        // LÓGICA DE FILTRAGEM RÁPIDA (HOJE, SEMANA, MÊS, ANO)
+        function setQuickPeriodFilter(period) {
+            quickPeriodFilter = period;
+            document.querySelectorAll('.btn-period').forEach(b => {
+                b.classList.remove('bg-dark-card', 'text-white');
+                b.classList.add('text-zinc-400');
+            });
+            const activeB = document.getElementById(`btn-period-${period}`);
+            if (activeB) {
+                activeB.classList.add('bg-dark-card', 'text-white');
+                activeB.classList.remove('text-zinc-400');
+            }
+            updateAll();
+        }
+
         function getFilteredData() {
             const start = document.getElementById('filter-start-date').value;
             const end = document.getElementById('filter-end-date').value;
@@ -655,6 +838,7 @@
             let fDespesas = [...despesas];
             let fEntradas = [...entradas];
 
+            // Filtro por Data Manual
             if (start) {
                 fDespesas = fDespesas.filter(d => (d.dataPagamento || d.dataVencimento) >= start);
                 fEntradas = fEntradas.filter(e => e.data >= start);
@@ -664,8 +848,47 @@
                 fEntradas = fEntradas.filter(e => e.data <= end);
             }
 
+            // Filtro por Categoria Ativa
             if (activeCategoryFilter) {
                 fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
+            }
+
+            // Filtro Rápido por Período
+            if (quickPeriodFilter !== 'all') {
+                const now = new Date();
+                const todayStr = now.toISOString().split('T')[0];
+
+                if (quickPeriodFilter === 'day') {
+                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataPagamento === todayStr));
+                } else if (quickPeriodFilter === 'week') {
+                    const startOfWeek = new Date(now);
+                    startOfWeek.setDate(now.getDate() - now.getDay());
+                    const endOfWeek = new Date(startOfWeek);
+                    endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+                    const sStr = startOfWeek.toISOString().split('T')[0];
+                    const eStr = endOfWeek.toISOString().split('T')[0];
+                    fDespesas = fDespesas.filter(d => {
+                        const dt = d.dataVencimento || d.dataPagamento;
+                        return dt >= sStr && dt <= eStr;
+                    });
+                } else if (quickPeriodFilter === 'month') {
+                    const currentMonth = now.getMonth();
+                    const currentYear = now.getFullYear();
+                    fDespesas = fDespesas.filter(d => {
+                        const dt = d.dataVencimento || d.dataPagamento;
+                        if (!dt) return false;
+                        const p = new Date(dt + 'T00:00:00');
+                        return p.getMonth() === currentMonth && p.getFullYear() === currentYear;
+                    });
+                } else if (quickPeriodFilter === 'year') {
+                    const currentYear = now.getFullYear();
+                    fDespesas = fDespesas.filter(d => {
+                        const dt = d.dataVencimento || d.dataPagamento;
+                        if (!dt) return false;
+                        return new Date(dt + 'T00:00:00').getFullYear() === currentYear;
+                    });
+                }
             }
 
             return { fDespesas, fEntradas };
@@ -715,6 +938,78 @@
             return (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
+        function toggleSelectAll(masterCheckbox) {
+            const { fDespesas } = getFilteredData();
+            if (masterCheckbox.checked) {
+                fDespesas.forEach(d => selectedDespesasIds.add(d.id));
+            } else {
+                selectedDespesasIds.clear();
+            }
+            renderTables();
+        }
+
+        function toggleSelectDespesa(id, checkbox) {
+            if (checkbox.checked) {
+                selectedDespesasIds.add(id);
+            } else {
+                selectedDespesasIds.delete(id);
+            }
+            updateBulkBar();
+        }
+
+        function updateBulkBar() {
+            const bar = document.getElementById('bulk-actions-bar');
+            const countSpan = document.getElementById('selected-count');
+            countSpan.textContent = selectedDespesasIds.size;
+            if (selectedDespesasIds.size > 0) {
+                bar.classList.remove('hidden');
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        function deleteSelectedDespesas() {
+            if (selectedDespesasIds.size === 0) return;
+            if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens selecionados?`)) {
+                despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
+                selectedDespesasIds.clear();
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                updateAll();
+            }
+        }
+
+        function deleteAllDespesas() {
+            if (confirm('ATENÇÃO: Deseja realmente excluir TODAS as despesas cadastradas no sistema? Esta ação não pode ser desfeita.')) {
+                despesas = [];
+                selectedDespesasIds.clear();
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                updateAll();
+            }
+        }
+
+        // ATUALIZAÇÃO DIRETA NA TABELA: RECONHECIMENTO DE PAGAMENTO AUTOMÁTICO
+        function updateValorPagoDirectly(id, inputElement) {
+            const valPago = parseFloat(inputElement.value) || 0;
+            const idx = despesas.findIndex(d => d.id == id);
+            if (idx !== -1) {
+                despesas[idx].valorPago = valPago;
+                const valLancado = parseFloat(despesas[idx].valor) || 0;
+                
+                // Regra de Ouro: Se valor pago >= valor lançado -> PAGO automaticamente
+                if (valPago > 0 && valPago >= valLancado) {
+                    despesas[idx].status = 'Pago';
+                    if (!despesas[idx].dataPagamento) {
+                        despesas[idx].dataPagamento = new Date().toISOString().split('T')[0];
+                    }
+                } else {
+                    despesas[idx].status = 'Pendente';
+                }
+
+                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                updateAll();
+            }
+        }
+
         function renderTables() {
             const { fDespesas, fEntradas } = getFilteredData();
             const search = document.getElementById('search-despesas')?.value.toLowerCase() || '';
@@ -732,18 +1027,35 @@
                 filteredDesp.forEach(d => {
                     const isPago = (d.status || '').toLowerCase().includes('pago');
                     const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
+                    const catColor = getCategoryColor(d.tipoDespesa);
+
                     tbodyDespesas.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
                             <td class="p-3 text-center">
-                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id})" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                             </td>
                             <td class="p-3">${d.dataVencimento || '-'}</td>
                             <td class="p-3">${d.dataPagamento || '-'}</td>
-                            <td class="p-3 font-semibold text-brand-400">${d.mes || '-'}</td>
-                            <td class="p-3 font-medium text-white">${d.tipoDespesa || 'Geral'}</td>
+                            <td class="p-3 font-medium text-white flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
+                                ${d.tipoDespesa || 'Geral'}
+                            </td>
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
-                            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${d.status || 'Pendente'}</span></td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
+                            
+                            <!-- INPUT DE VALOR PAGO DIRETO NA TABELA PARA RECONHECIMENTO AUTOMÁTICO -->
+                            <td class="p-3 text-right">
+                                <input type="number" step="0.01" value="${d.valorPago !== undefined ? d.valorPago : (isPago ? d.valor : '')}" 
+                                       onchange="updateValorPagoDirectly(${d.id}, this)" 
+                                       placeholder="0.00" 
+                                       class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </td>
+
+                            <td class="p-3 text-center">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                                    ${d.status || 'Pendente'}
+                                </span>
+                            </td>
                             <td class="p-3 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
@@ -755,7 +1067,7 @@
                 });
             }
 
-            updateDeleteSelectedButton();
+            updateBulkBar();
 
             const tbodyEntradas = document.getElementById('table-entradas-body');
             tbodyEntradas.innerHTML = '';
@@ -777,49 +1089,6 @@
             lucide.createIcons();
         }
 
-        function toggleSelectDespesa(id) {
-            if (selectedDespesasIds.has(id)) {
-                selectedDespesasIds.delete(id);
-            } else {
-                selectedDespesasIds.add(id);
-            }
-            updateDeleteSelectedButton();
-        }
-
-        function toggleSelectAll(masterCheckbox) {
-            const { fDespesas } = getFilteredData();
-            if (masterCheckbox.checked) {
-                fDespesas.forEach(d => selectedDespesasIds.add(d.id));
-            } else {
-                fDespesas.forEach(d => selectedDespesasIds.delete(d.id));
-            }
-            renderTables();
-        }
-
-        function updateDeleteSelectedButton() {
-            const btn = document.getElementById('btn-delete-selected');
-            const countSpan = document.getElementById('selected-count');
-            if (selectedDespesasIds.size > 0) {
-                btn.classList.remove('hidden');
-                btn.classList.add('flex');
-                countSpan.textContent = selectedDespesasIds.size;
-            } else {
-                btn.classList.add('hidden');
-                btn.classList.remove('flex');
-            }
-        }
-
-        function deleteSelectedDespesas() {
-            if (selectedDespesasIds.size === 0) return;
-            if (confirm(`Tem certeza de que deseja excluir as ${selectedDespesasIds.size} despesas selecionadas?`)) {
-                despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
-                selectedDespesasIds.clear();
-                document.getElementById('select-all-checkbox').checked = false;
-                localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
-                updateAll();
-            }
-        }
-
         function openEditDespesaModal(id) {
             const d = despesas.find(item => item.id == id);
             if (!d) return;
@@ -830,7 +1099,7 @@
             document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
             document.getElementById('edit-despesa-desc').value = d.descricao || '';
             document.getElementById('edit-despesa-valor').value = d.valor || 0;
-            document.getElementById('edit-despesa-status').value = d.status || 'Pago';
+            document.getElementById('edit-despesa-valorpago').value = d.valorPago !== undefined ? d.valorPago : (d.status === 'Pago' ? d.valor : 0);
 
             document.getElementById('modal-edit-despesa').classList.remove('hidden');
         }
@@ -898,11 +1167,18 @@
                 const tipo = d.tipoDespesa || 'Outros';
                 tipoMap[tipo] = (tipoMap[tipo] || 0) + (parseFloat(d.valor) || 0);
             });
+
+            const tipoLabels = Object.keys(tipoMap);
+            const tipoColors = getColorsForCategories(tipoLabels);
+
             charts.tipo = new Chart(document.getElementById('chart-tipo-despesa').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(tipoMap).length ? Object.keys(tipoMap) : ['Sem dados'],
-                    datasets: [{ data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], backgroundColor: ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'] }]
+                    labels: tipoLabels.length ? tipoLabels : ['Sem dados'],
+                    datasets: [{ 
+                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], 
+                        backgroundColor: tipoLabels.length ? tipoColors : ['#3f3f46'] 
+                    }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } } }
             });
@@ -910,8 +1186,13 @@
             charts.despTipo = new Chart(document.getElementById('chart-despesas-tipo').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(tipoMap),
-                    datasets: [{ label: 'Valor por Tipo', data: Object.values(tipoMap), backgroundColor: '#7c3aed', borderRadius: 4 }]
+                    labels: tipoLabels,
+                    datasets: [{ 
+                        label: 'Valor por Tipo', 
+                        data: Object.values(tipoMap), 
+                        backgroundColor: tipoColors, 
+                        borderRadius: 4 
+                    }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
             });
@@ -921,11 +1202,20 @@
                 const desc = d.descricao || 'Outros';
                 descMap[desc] = (descMap[desc] || 0) + (parseFloat(d.valor) || 0);
             });
+
+            const descLabels = Object.keys(descMap);
+            const descColors = getColorsForCategories(descLabels);
+
             charts.despDesc = new Chart(document.getElementById('chart-despesas-desc').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(descMap),
-                    datasets: [{ label: 'Valor por Descrição', data: Object.values(descMap), backgroundColor: '#3b82f6', borderRadius: 4 }]
+                    labels: descLabels,
+                    datasets: [{ 
+                        label: 'Valor por Descrição', 
+                        data: Object.values(descMap), 
+                        backgroundColor: descColors, 
+                        borderRadius: 4 
+                    }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
             });
@@ -958,15 +1248,34 @@
             });
         }
 
-        // LÓGICA E GRÁFICOS EXCLUSIVOS DA ABA DIRETORIA
         function updateDiretoria() {
             const selectedMonth = document.getElementById('dir-month-select').value;
 
             let dDespesas = [...despesas];
             let dEntradas = [...entradas];
 
+            let monthsLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let entComp = new Array(12).fill(0);
+            let saiComp = new Array(12).fill(0);
+
+            entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
+            despesas.forEach(d => {
+                const dt = d.dataPagamento || d.dataVencimento;
+                let m = -1;
+                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
+                    m = monthMap[String(d.mes).toLowerCase().trim()];
+                } else if (dt) {
+                    m = new Date(dt + 'T00:00:00').getMonth();
+                }
+                if (m >= 0 && m < 12) saiComp[m] += d.valor;
+            });
+
             if (selectedMonth !== 'all') {
                 const m = parseInt(selectedMonth);
+                monthsLabels = [monthsLabels[m]];
+                entComp = [entComp[m]];
+                saiComp = [saiComp[m]];
+
                 dDespesas = dDespesas.filter(d => {
                     if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
                         return monthMap[String(d.mes).toLowerCase().trim()] === m;
@@ -1001,7 +1310,24 @@
             document.getElementById('dir-kpi-margem').textContent = `Margem Operacional: ${margem}%`;
             document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
 
-            // 1. Gráfico Balanço (Barra Comparativa Entradas vs Saídas)
+            if (charts.dirCompMensal) charts.dirCompMensal.destroy();
+            charts.dirCompMensal = new Chart(document.getElementById('dir-chart-comparativo-mensal').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: monthsLabels,
+                    datasets: [
+                        { label: 'Entradas (Faturamento)', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
+                        { label: 'Saídas (Custos)', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } },
+                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
+                }
+            });
+
             if (charts.dirBalanco) charts.dirBalanco.destroy();
             charts.dirBalanco = new Chart(document.getElementById('dir-chart-balanco').getContext('2d'), {
                 type: 'bar',
@@ -1021,21 +1347,23 @@
                 }
             });
 
-            // 2. Gráfico Tipos de Despesa do Mês
             const tipoMap = {};
             dDespesas.forEach(d => {
                 const t = d.tipoDespesa || 'Geral';
                 tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
             });
 
+            const dirTipoKeys = Object.keys(tipoMap);
+            const dirTipoColors = getColorsForCategories(dirTipoKeys);
+
             if (charts.dirTipoMês) charts.dirTipoMês.destroy();
             charts.dirTipoMês = new Chart(document.getElementById('dir-chart-tipo').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(tipoMap).length ? Object.keys(tipoMap) : ['Sem dados'],
+                    labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
                     datasets: [{
                         data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1],
-                        backgroundColor: ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b']
+                        backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46']
                     }]
                 },
                 options: {
@@ -1045,20 +1373,22 @@
                 }
             });
 
-            // 3. Tabela de Tipos x Participação %
             const tbodyTipos = document.getElementById('dir-table-tipos-body');
             tbodyTipos.innerHTML = '';
-            const tiposKeys = Object.keys(tipoMap);
 
-            if (tiposKeys.length === 0) {
+            if (dirTipoKeys.length === 0) {
                 tbodyTipos.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-zinc-500">Nenhuma despesa registrada para o mês selecionado.</td></tr>`;
             } else {
-                tiposKeys.forEach(tipo => {
+                dirTipoKeys.forEach(tipo => {
                     const val = tipoMap[tipo];
                     const part = totalSaidas > 0 ? ((val / totalSaidas) * 100).toFixed(1) : '0.0';
+                    const catColor = getCategoryColor(tipo);
                     tbodyTipos.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 font-medium text-white">${tipo}</td>
+                            <td class="p-3 font-medium text-white flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${catColor}"></span>
+                                ${tipo}
+                            </td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(val)}</td>
                             <td class="p-3 text-right font-semibold text-zinc-300">${part}%</td>
                             <td class="p-3 text-center">
@@ -1071,7 +1401,6 @@
                 });
             }
 
-            // 4. Ranking Top 5 Maiores Despesas
             const sortedDespesas = [...dDespesas].sort((a, b) => b.valor - a.valor).slice(0, 5);
             const containerTop = document.getElementById('dir-top-gastos-list');
             containerTop.innerHTML = '';
@@ -1121,7 +1450,6 @@
             const reader = new FileReader();
             reader.onload = (evt) => {
                 const data = new Uint8Array(evt.target.result);
-                // cellDates: true ensures SheetJS correctly parses Excel serial date numbers into JS Date objects
                 const workbook = XLSX.read(data, { type: 'array', cellDates: true });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -1134,6 +1462,7 @@
                 const idxTipo = headers.findIndex(h => h.includes('tipo') || h.includes('categoria'));
                 const idxDesc = headers.findIndex(h => h.includes('descri') || h.includes('fornecedor') || h.includes('referencia'));
                 const idxVal = headers.findIndex(h => h.includes('valor') || h.includes('debito') || h.includes('saida'));
+                const idxValPago = headers.findIndex(h => h.includes('pago'));
                 const idxStatus = headers.findIndex(h => h.includes('status') || h.includes('situa'));
                 const idxMes = headers.findIndex(h => h.includes('mês') || h.includes('mes'));
 
@@ -1144,6 +1473,9 @@
                     const val = parseFloat(row[idxVal !== -1 ? idxVal : 9]) || parseFloat(row[5]) || 0;
                     if (val === 0) continue;
 
+                    const valPago = parseFloat(row[idxValPago !== -1 ? idxValPago : -1]) || (String(row[idxStatus !== -1 ? idxStatus : 8]).toLowerCase().includes('pago') ? val : 0);
+                    const isPago = valPago > 0 && valPago >= val;
+
                     parsedDespesas.push({
                         id: Date.now() + i,
                         dataVencimento: formatDateVal(row[idxVenc !== -1 ? idxVenc : 1]),
@@ -1151,8 +1483,9 @@
                         mes: idxMes !== -1 ? String(row[idxMes] || '') : '',
                         tipoDespesa: row[idxTipo !== -1 ? idxTipo : 2] || 'Geral',
                         descricao: row[idxDesc !== -1 ? idxDesc : 3] || 'Sem Descrição',
-                        status: row[idxStatus !== -1 ? idxStatus : 8] || 'Pago',
-                        valor: val
+                        valor: val,
+                        valorPago: valPago,
+                        status: isPago ? 'Pago' : 'Pendente'
                     });
                 }
                 despesas = parsedDespesas;
@@ -1171,12 +1504,13 @@
                 'Mês': d.mes,
                 'Tipo de Despesa': d.tipoDespesa,
                 'Descrição': d.descricao,
-                'Status': d.status,
-                'Valor (R$)': d.valor
+                'Valor Lançado (R$)': d.valor,
+                'Valor Pago (R$)': d.valorPago !== undefined ? d.valorPago : (d.status === 'Pago' ? d.valor : 0),
+                'Status': d.status
             }));
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Fluxo de Caixa");
+            XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
             XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
         }
 
