@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Supabase Client para Sincronização em Nuvem em Tempo Real -->
+    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
@@ -21,20 +21,11 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f5f3ff',
-                            100: '#ede9fe',
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            800: '#5b21b6',
-                            900: '#4c1d95',
+                            50: '#f5f3ff', 100: '#ede9fe', 500: '#8b5cf6', 600: '#7c3aed',
+                            700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95',
                         },
                         dark: {
-                            bg: '#09090b',
-                            card: '#18181b',
-                            border: '#27272a',
-                            input: '#27272a',
-                            hover: '#3f3f46'
+                            bg: '#09090b', card: '#18181b', border: '#27272a', input: '#27272a', hover: '#3f3f46'
                         }
                     }
                 }
@@ -76,28 +67,21 @@
                     <i data-lucide="log-in" class="w-4 h-4"></i> Entrar no Sistema
                 </button>
             </form>
-            <div class="mt-6 text-center text-xs text-zinc-500">
-                Acesso protegido • Stanize 2026
-            </div>
         </div>
     </div>
 
     <!-- ESTRUTURA PRINCIPAL -->
     <div id="app" class="hidden flex-1 flex flex-col">
-        <!-- HEADER -->
         <header class="bg-dark-card border-b border-dark-border sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-brand-600 rounded-lg text-white">
-                        <i data-lucide="trending-up" class="w-5 h-5"></i>
-                    </div>
+                    <div class="p-2 bg-brand-600 rounded-lg text-white"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
                     <div>
                         <span class="font-bold text-lg text-white tracking-tight">Stanize</span>
                         <span class="text-xs text-brand-500 font-semibold block sm:inline sm:ml-2 uppercase tracking-wider">Fluxo de Caixa</span>
                     </div>
                 </div>
 
-                <!-- MENU NAVEGAÇÃO -->
                 <nav class="hidden md:flex items-center gap-1 bg-dark-bg p-1 rounded-xl border border-dark-border">
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn tab-switch px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral
@@ -132,22 +116,10 @@
                     </button>
                 </div>
             </div>
-
-            <!-- MENU MOBILE -->
-            <div class="md:hidden flex border-t border-dark-border overflow-x-auto p-2 gap-2 custom-scrollbar">
-                <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-dark-card text-white whitespace-nowrap">Visão Geral</button>
-                <button onclick="switchTab('lancardespesa')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Lançar Despesa</button>
-                <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Contas a Pagar</button>
-                <button onclick="switchTab('entradas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Entradas</button>
-                <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria</button>
-                <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-brand-400 whitespace-nowrap hidden">Painel Master</button>
-            </div>
         </header>
 
-        <!-- CONTEÚDO -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-
-            <!-- BARRA DE AÇÕES GLOBAL -->
+            <!-- BARRA GLOBAL -->
             <div class="bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="w-full md:w-auto flex items-center gap-3 flex-wrap">
                     <label id="wrapper-import-despesas" class="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
@@ -157,26 +129,10 @@
                     <button onclick="exportData()" class="bg-dark-bg hover:bg-dark-hover border border-dark-border text-zinc-300 hover:text-white text-sm font-medium px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2">
                         <i data-lucide="download" class="w-4 h-4"></i> Baixar Padrão
                     </button>
-                    <div id="active-filter-badge" class="hidden items-center gap-2 bg-brand-500/20 border border-brand-500/30 px-3 py-1.5 rounded-xl text-xs text-brand-300">
-                        <span>Filtro Ativo: <strong id="filter-badge-text"></strong></span>
-                        <button onclick="clearCategoryFilter()" class="hover:text-white font-bold ml-1">✕</button>
-                    </div>
-                </div>
-
-                <div class="w-full md:w-auto flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2 bg-dark-bg border border-dark-border px-3 py-1.5 rounded-xl">
-                        <i data-lucide="calendar" class="w-4 h-4 text-zinc-400"></i>
-                        <span class="text-xs text-zinc-400">De:</span>
-                        <input type="date" id="filter-start-date" class="bg-transparent text-xs text-white focus:outline-none">
-                        <span class="text-xs text-zinc-400">Até:</span>
-                        <input type="date" id="filter-end-date" class="bg-transparent text-xs text-white focus:outline-none">
-                    </div>
-                    <button onclick="updateAll()" class="bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition">Filtrar</button>
-                    <button onclick="clearDateFilter()" class="text-xs text-zinc-400 hover:text-white underline">Limpar</button>
                 </div>
             </div>
 
-            <!-- TAB 1: DASHBOARD / VISÃO GERAL -->
+            <!-- TABS -->
             <section id="tab-dashboard" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div id="card-kpi-entradas" class="bg-dark-card border border-dark-border p-5 rounded-2xl">
@@ -200,435 +156,70 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div id="panel-fluxo-mensal" class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i> Fluxo Mensal (Entradas vs Saídas)
-                        </h3>
-                        <div class="h-72"><canvas id="chart-fluxo-mensal"></canvas></div>
-                    </div>
-                    <div id="panel-gastos-categoria" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Gastos por Tipo de Despesa
-                        </h3>
-                        <div class="h-72 flex items-center justify-center"><canvas id="chart-tipo-despesa"></canvas></div>
-                    </div>
-                </div>
             </section>
 
-            <!-- TAB LANÇAR DESPESA -->
             <section id="tab-lancardespesa" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto bg-dark-card border border-dark-border p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
-                    <div class="flex items-center gap-3 border-b border-dark-border pb-4">
-                        <div class="p-2.5 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
-                            <i data-lucide="minus-circle" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-white">Lançar Nova Despesa</h2>
-                            <p class="text-xs text-zinc-400">Cadastre a conta a pagar seguindo o padrão de colunas.</p>
-                        </div>
-                    </div>
-
+                    <h2 class="text-lg font-bold text-white">Lançar Nova Despesa</h2>
                     <form id="form-nova-despesa" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Código (Número) *</label>
-                                <input type="number" id="novo-despesa-codigo" required placeholder="Ex: 1, 2, 3..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Lançamento *</label>
-                                <input type="date" id="novo-despesa-lanc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tipo de Despesa *</label>
-                                <input type="text" id="novo-despesa-tipo" required placeholder="Ex: Operacional, Aluguel..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Descrição *</label>
-                                <input type="text" id="novo-despesa-desc" required placeholder="Ex: Fornecedor..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Total (R$) *</label>
-                                <input type="number" step="0.01" id="novo-despesa-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Pago (R$) <span class="text-zinc-500">(Zerado = Conta a Pagar)</span></label>
-                                <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Vencimento *</label>
-                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                        </div>
-
-                        <div class="pt-2">
-                            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20">
-                                <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar Despesa no Sistema
-                            </button>
-                        </div>
+                        <input type="number" id="novo-despesa-codigo" required placeholder="Código" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="date" id="novo-despesa-lanc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="text" id="novo-despesa-tipo" required placeholder="Tipo de Despesa" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="text" id="novo-despesa-desc" required placeholder="Descrição" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="number" step="0.01" id="novo-despesa-valor" required placeholder="Valor Total" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="Valor Pago" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
+                        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-3 rounded-xl text-xs">Cadastrar</button>
                     </form>
                 </div>
             </section>
 
-            <!-- TAB 2: CONTAS A PAGAR -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div id="panel-despesas-tipo" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Tipo de Despesa</h3>
-                        <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-tipo"></canvas></div>
-                    </div>
-                    <div id="panel-despesas-desc" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Análise por Descrição</h3>
-                        <div class="h-64 flex items-center justify-center"><canvas id="chart-despesas-desc"></canvas></div>
-                    </div>
-                </div>
-
                 <div class="bg-dark-card border border-dark-border rounded-2xl p-6 space-y-4">
-                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-white">Contas a Pagar (Classificado por Data de Vencimento)</h2>
-                            <p class="text-xs text-zinc-400">Apenas despesas sem Valor Pago lançado. Preencha o valor pago para dar baixa.</p>
-                        </div>
-
-                        <!-- SELETOR RÁPIDO DE PERÍODO -->
-                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <div class="flex items-center gap-1 bg-dark-bg border border-dark-border p-1 rounded-xl">
-                                <button onclick="setQuickPeriodFilter('all')" id="btn-period-all" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-dark-card">Todas</button>
-                                <button onclick="setQuickPeriodFilter('day')" id="btn-period-day" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Hoje</button>
-                                <button onclick="setQuickPeriodFilter('week')" id="btn-period-week" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Esta Semana</button>
-                                <button onclick="setQuickPeriodFilter('month')" id="btn-period-month" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Mês</button>
-                                <button onclick="setQuickPeriodFilter('year')" id="btn-period-year" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Ano</button>
-                            </div>
-                            <div class="relative w-full sm:w-48">
-                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-zinc-500"></i>
-                                <input type="text" id="search-despesas" oninput="renderTables()" placeholder="Buscar..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BARRA FLUTUANTE DE AÇÕES EM MASSA -->
-                    <div id="bulk-actions-bar" class="hidden bg-dark-bg border border-brand-500/40 p-3 rounded-xl flex items-center justify-between gap-3 transition">
-                        <div class="text-xs text-brand-400 font-bold flex items-center gap-2">
-                            <i data-lucide="check-square" class="w-4 h-4"></i>
-                            <span id="selected-count">0</span> itens selecionados
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="deleteSelectedDespesas()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir Selecionados
-                            </button>
-                            <button onclick="deleteAllDespesas()" class="bg-zinc-800 hover:bg-zinc-700 text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-500/20">
-                                <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> Excluir TODOS
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-xs text-zinc-300">
-                            <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                <tr>
-                                    <th class="p-3 w-10 text-center col-select-header">
-                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
-                                    </th>
-                                    <th class="p-3">Código</th>
-                                    <th class="p-3">Lançamento</th>
-                                    <th class="p-3">Tipo Despesa</th>
-                                    <th class="p-3">Descrição</th>
-                                    <th class="p-3">Mês</th>
-                                    <th class="p-3 text-right">Valor Total</th>
-                                    <th class="p-3 text-right">Valor Pago (R$)</th>
-                                    <th class="p-3">Vencimento</th>
-                                    <th class="p-3 text-center">Status</th>
-                                    <th class="p-3 text-center col-acoes-header">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-despesas-body" class="divide-y divide-dark-border"></tbody>
-                        </table>
-                    </div>
+                    <h2 class="text-lg font-bold text-white">Contas a Pagar</h2>
+                    <table class="w-full text-left text-xs text-zinc-300">
+                        <tbody id="table-despesas-body"></tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- TAB 3: ENTRADAS MANUAIS -->
             <section id="tab-entradas" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div id="panel-form-entrada" class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 id="form-entrada-title" class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada
-                        </h3>
-                        <form id="form-entrada" class="space-y-4">
-                            <input type="hidden" id="entrada-edit-id">
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Valor do Crédito (R$)</label>
-                                <input type="number" step="0.01" id="entrada-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Referente a</label>
-                                <input type="text" id="entrada-descricao" required placeholder="Descrição da entrada..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Data do Crédito</label>
-                                <input type="date" id="entrada-data" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div class="flex gap-2">
-                                <button type="submit" id="btn-salvar-entrada" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
-                                    <i data-lucide="save" class="w-4 h-4"></i> Salvar Entrada
-                                </button>
-                                <button type="button" id="btn-cancelar-entrada" onclick="cancelEditEntrada()" class="hidden bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium px-4 py-2.5 rounded-xl transition text-xs">
-                                    Cancelar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Créditos Lançados</h3>
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-xs text-zinc-300">
-                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                    <tr>
-                                        <th class="p-3">Data</th>
-                                        <th class="p-3">Referência</th>
-                                        <th class="p-3 text-right">Valor (R$)</th>
-                                        <th class="p-3 text-center col-acoes-header">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-entradas-body" class="divide-y divide-dark-border"></tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <h2 class="text-lg font-bold text-white">Entradas</h2>
                 </div>
             </section>
 
-            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO -->
             <section id="tab-diretoria" class="tab-content hidden space-y-6">
-                <!-- TOP HEADER BAR COM SELETOR DE MÊS -->
-                <div class="bg-gradient-to-r from-zinc-900 via-dark-card to-brand-950/40 border border-brand-500/30 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
-                    <div class="space-y-2">
-                        <span class="px-3 py-1 bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">Relatório Executivo</span>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Dashboard de Performance Mensal</h2>
-                        <p class="text-zinc-400 text-xs sm:text-sm">Compare receitas, custos e margem operacional com dados consolidados.</p>
-                    </div>
-
-                    <!-- SELETOR DE MÊS DA DIRETORIA -->
-                    <div class="bg-dark-bg border border-dark-border p-3 rounded-2xl flex items-center gap-3 w-full md:w-auto">
-                        <i data-lucide="filter" class="w-5 h-5 text-brand-500"></i>
-                        <div>
-                            <label class="block text-[10px] font-bold text-zinc-400 uppercase">Filtrar Mês de Análise</label>
-                            <select id="dir-month-select" onchange="updateDiretoria()" class="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer pr-4">
-                                <option value="all" class="bg-dark-card text-white">Todos os Meses (Consolidado)</option>
-                                <option value="0" class="bg-dark-card text-white">Janeiro</option>
-                                <option value="1" class="bg-dark-card text-white">Fevereiro</option>
-                                <option value="2" class="bg-dark-card text-white">Março</option>
-                                <option value="3" class="bg-dark-card text-white">Abril</option>
-                                <option value="4" class="bg-dark-card text-white">Maio</option>
-                                <option value="5" class="bg-dark-card text-white">Junho</option>
-                                <option value="6" class="bg-dark-card text-white">Julho</option>
-                                <option value="7" class="bg-dark-card text-white">Agosto</option>
-                                <option value="8" class="bg-dark-card text-white">Setembro</option>
-                                <option value="9" class="bg-dark-card text-white">Outubro</option>
-                                <option value="10" class="bg-dark-card text-white">Novembro</option>
-                                <option value="11" class="bg-dark-card text-white">Dezembro</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARDS DE RESUMO EXECUTIVO DO MÊS -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div id="dir-card-entradas" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
-                        <div class="text-xs font-semibold text-zinc-400 uppercase">Receita (Entradas Mês)</div>
-                        <div id="dir-kpi-entradas" class="text-2xl font-black text-emerald-400 mt-1">R$ 0,00</div>
-                    </div>
-                    <div id="dir-card-saidas" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
-                        <div class="text-xs font-semibold text-zinc-400 uppercase">Custos (Saídas Mês)</div>
-                        <div id="dir-kpi-saidas" class="text-2xl font-black text-rose-400 mt-1">R$ 0,00</div>
-                    </div>
-                    <div id="dir-card-resultado" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
-                        <div class="text-xs font-semibold text-zinc-400 uppercase">Resultado Líquido</div>
-                        <div id="dir-kpi-resultado" class="text-2xl font-black text-white mt-1">R$ 0,00</div>
-                    </div>
-                    <div id="dir-card-pendente" class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
-                        <div class="text-xs font-semibold text-zinc-400 uppercase">Contas em Aberto</div>
-                        <div id="dir-kpi-pendente" class="text-2xl font-black text-amber-400 mt-1">R$ 0,00</div>
-                    </div>
-                </div>
-
-                <!-- GRÁFICO COMPARATIVO ENTRADAS X SAÍDAS MÊS A MÊS -->
-                <div id="dir-panel-comparativo" class="bg-dark-card border border-brand-500/30 p-6 rounded-2xl space-y-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-dark-border pb-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Comparativo Mensal: Entradas vs Saídas
-                            </h3>
-                            <p class="text-xs text-zinc-400">Visualização dinâmica consolidada ou focada mês a mês</p>
-                        </div>
-                    </div>
-                    <div class="h-80"><canvas id="dir-chart-comparativo-mensal"></canvas></div>
-                </div>
-
-                <!-- GRÁFICOS DIRETORIA -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div id="dir-panel-balanco" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Balanço Geral (Créditos vs Custos)
-                        </h3>
-                        <div class="h-72"><canvas id="dir-chart-balanco"></canvas></div>
-                    </div>
-                    <div id="dir-panel-tipo" class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Distribuição dos Custos no Mês
-                        </h3>
-                        <div class="h-72 flex items-center justify-center"><canvas id="dir-chart-tipo"></canvas></div>
-                    </div>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
+                    <h2 class="text-lg font-bold text-white">Diretoria</h2>
                 </div>
             </section>
 
-            <!-- TAB 5: PAINEL MASTER (USUÁRIOS E CONTROLE DE VISIBILIDADE DO OPERADOR) -->
+            <!-- PAINEL MASTER -->
             <section id="tab-usuarios" class="tab-content hidden space-y-6">
                 <div class="bg-dark-card border border-brand-500/30 p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
-                    <div class="flex items-center gap-3 border-b border-dark-border pb-4">
-                        <div class="p-3 bg-brand-500/10 text-brand-400 rounded-xl border border-brand-500/20">
-                            <i data-lucide="shield" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-white">Painel de Controle Master (Visibilidade & Usuários)</h2>
-                            <p class="text-xs text-zinc-400">Gerencie operadores e escolha quais informações e abas o usuário operador pode ver no sistema.</p>
-                        </div>
-                    </div>
-
-                    <!-- CONTROLE DE VISIBILIDADE -->
+                    <h2 class="text-xl font-bold text-white">Painel de Controle Master (Supabase)</h2>
                     <div class="space-y-4">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="eye" class="w-4 h-4 text-brand-400"></i> Controle de Visibilidade das Informações para o Operador
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="visibility-toggles-container">
-                            <!-- Toggles gerados via JavaScript -->
-                        </div>
-                    </div>
-
-                    <div class="border-t border-dark-border pt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="bg-dark-bg border border-dark-border p-6 rounded-xl space-y-4">
-                            <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                                <i data-lucide="user-plus" class="w-4 h-4 text-brand-500"></i> Cadastrar Operador
-                            </h3>
-                            <form id="form-cad-user" class="space-y-4">
-                                <div>
-                                    <label class="block text-xs font-medium text-zinc-400 mb-1">E-mail</label>
-                                    <input type="email" id="cad-user-email" required class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-zinc-400 mb-1">Senha</label>
-                                    <input type="password" id="cad-user-pass" required class="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-                                </div>
-                                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
-                                    Salvar Usuário
-                                </button>
-                            </form>
-                        </div>
-                        <div class="lg:col-span-2 bg-dark-bg border border-dark-border p-6 rounded-xl space-y-4">
-                            <h3 class="text-sm font-semibold text-zinc-200 uppercase">Usuários do Sistema</h3>
-                            <div class="overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left text-xs text-zinc-300">
-                                    <thead class="bg-dark-card text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                        <tr><th class="p-3">E-mail</th><th class="p-3">Perfil</th><th class="p-3 text-center">Ações</th></tr>
-                                    </thead>
-                                    <tbody id="table-users-body" class="divide-y divide-dark-border"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CONFIGURAÇÃO SUPABASE -->
-                    <div class="border-t border-dark-border pt-6 space-y-4">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="cloud" class="w-4 h-4 text-brand-400"></i> Sincronização em Nuvem Multi-Computador (Supabase)
-                        </h3>
-                        <p class="text-xs text-zinc-400">Para salvar e ver as atualizações em qualquer computador (Master ou Operador), insira suas credenciais do Supabase abaixo:</p>
+                        <h3 class="text-sm font-bold text-white uppercase">Credenciais de Nuvem</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-zinc-300 mb-1">Supabase URL</label>
-                                <input type="text" id="supabase-url-input" placeholder="https://xxxx.supabase.co" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <input type="text" id="supabase-url-input" placeholder="https://xxxx.supabase.co" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Supabase Anon Key</label>
-                                <input type="password" id="supabase-key-input" placeholder="eyJhbGciOi..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Supabase Publishable Key (ou Anon Key)</label>
+                                <input type="password" id="supabase-key-input" placeholder="sb_publishable_... ou eyJhbGci..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white">
                             </div>
                         </div>
-                        <button onclick="saveSupabaseConfig()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-600/20">
+                        <button onclick="saveSupabaseConfig()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs">
                             Salvar Credenciais de Nuvem e Conectar
                         </button>
                     </div>
-
                 </div>
             </section>
-
         </main>
-
-        <footer class="bg-dark-card border-t border-dark-border py-4 text-center text-xs text-zinc-500">
-            Stanize Consultoria e Assessoria Comercial • Sistema Interno de Fluxo de Caixa
-        </footer>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE DESPESA -->
-    <div id="modal-edit-despesa" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 px-4">
-        <div class="bg-dark-card border border-dark-border p-6 rounded-2xl shadow-2xl w-full max-w-lg space-y-4">
-            <div class="flex items-center justify-between border-b border-dark-border pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Despesa
-                </h3>
-                <button onclick="closeEditDespesaModal()" class="text-zinc-400 hover:text-white">✕</button>
-            </div>
-            <form id="form-edit-despesa" class="space-y-3">
-                <input type="hidden" id="edit-despesa-id">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Código (Número)</label>
-                        <input type="number" id="edit-despesa-codigo" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Lançamento</label>
-                        <input type="date" id="edit-despesa-lanc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Tipo de Despesa</label>
-                        <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Descrição</label>
-                        <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Total (R$)</label>
-                        <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$)</label>
-                        <input type="number" step="0.01" id="edit-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
-                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeEditDespesaModal()" class="px-4 py-2 rounded-xl bg-zinc-800 text-xs text-zinc-300 hover:bg-zinc-700">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-medium hover:bg-brand-700">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- SCRIPT DO SISTEMA -->
     <script>
         const MASTER_EMAIL = "administrativo@stanize.com.br";
         const MASTER_PASS = "Lacan1404@";
@@ -641,98 +232,8 @@
         let despesas = JSON.parse(localStorage.getItem('stanize_despesas')) || [];
         let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
 
-        // Configurações de visibilidade controladas pelo Master para o Operador
-        let operatorVisibility = JSON.parse(localStorage.getItem('stanize_operator_visibility')) || {
-            'tab-dashboard': true,
-            'card-kpi-entradas': true,
-            'card-kpi-saidas': true,
-            'card-kpi-saldo': true,
-            'card-kpi-status': true,
-            'panel-fluxo-mensal': true,
-            'panel-gastos-categoria': true,
-            'tab-lancardespesa': true,
-            'tab-despesas': true,
-            'panel-despesas-tipo': true,
-            'panel-despesas-desc': true,
-            'tab-entradas': true,
-            'panel-form-entrada': true,
-            'tab-diretoria': true,
-            'dir-card-entradas': true,
-            'dir-card-saidas': true,
-            'dir-card-resultado': true,
-            'dir-card-pendente': true,
-            'dir-panel-comparativo': true,
-            'dir-panel-balanco': true,
-            'dir-panel-tipo': true
-        };
-
-        const visibilityLabels = {
-            'tab-dashboard': 'Aba Visão Geral',
-            'card-kpi-entradas': 'KPI: Total Entradas',
-            'card-kpi-saidas': 'KPI: Total Saídas',
-            'card-kpi-saldo': 'KPI: Saldo Líquido',
-            'card-kpi-status': 'KPI: Status Contas',
-            'panel-fluxo-mensal': 'Gráfico Fluxo Mensal',
-            'panel-gastos-categoria': 'Gráfico Gastos por Categoria',
-            'tab-lancardespesa': 'Aba Lançar Despesa',
-            'tab-despesas': 'Aba Contas a Pagar',
-            'panel-despesas-tipo': 'Gráfico Despesas por Tipo',
-            'panel-despesas-desc': 'Gráfico Despesas por Descrição',
-            'tab-entradas': 'Aba Entradas',
-            'panel-form-entrada': 'Formulário Lançar Entrada',
-            'tab-diretoria': 'Aba Diretoria & Dash',
-            'dir-card-entradas': 'Diretoria: Receita Mês',
-            'dir-card-saidas': 'Diretoria: Custos Mês',
-            'dir-card-resultado': 'Diretoria: Resultado Líquido',
-            'dir-card-pendente': 'Diretoria: Contas em Aberto',
-            'dir-panel-comparativo': 'Diretoria: Gráfico Comparativo',
-            'dir-panel-balanco': 'Diretoria: Gráfico Balanço',
-            'dir-panel-tipo': 'Diretoria: Gráfico Distribuição'
-        };
-
-        // Supabase Cloud Sync config
         let supabaseClient = null;
         let supabaseConfig = JSON.parse(localStorage.getItem('stanize_supabase_config')) || { url: '', key: '' };
-
-        let activeCategoryFilter = null;
-        let selectedDespesasIds = new Set();
-        let quickPeriodFilter = 'all';
-
-        let charts = {};
-
-        const COLOR_PALETTE = [
-            '#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
-            '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#f97316', 
-            '#6366f1', '#84cc16', '#d946ef', '#0284c7', '#eab308', 
-            '#a855f7', '#10b981', '#f43f5e', '#64748b', '#059669'
-        ];
-
-        let categoryColorMap = {};
-
-        function getCategoryColor(category) {
-            const catKey = String(category || 'Outros').trim();
-            if (!categoryColorMap[catKey]) {
-                const usedColors = Object.values(categoryColorMap);
-                const availableColor = COLOR_PALETTE.find(color => !usedColors.includes(color));
-                if (availableColor) {
-                    categoryColorMap[catKey] = availableColor;
-                } else {
-                    const hash = Array.from(catKey).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                    const hue = (hash * 137) % 360;
-                    categoryColorMap[catKey] = `hsl(${hue}, 70%, 55%)`;
-                }
-            }
-            return categoryColorMap[catKey];
-        }
-
-        function getColorsForCategories(categoriesArray) {
-            return categoriesArray.map(cat => getCategoryColor(cat));
-        }
-
-        const monthMap = {
-            'janeiro': 0, 'fevereiro': 1, 'março': 2, 'marco': 2, 'abril': 3, 'maio': 4, 'junho': 5,
-            'julho': 6, 'agosto': 7, 'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
@@ -752,113 +253,6 @@
                     err.classList.remove('hidden');
                 }
             });
-
-            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA
-            document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (currentUser && currentUser.role !== 'MASTER') {
-                    alert('Acesso negado: Apenas o usuário Master pode cadastrar despesas.');
-                    return;
-                }
-                const codigo = parseInt(document.getElementById('novo-despesa-codigo').value) || 1;
-                const lanc = document.getElementById('novo-despesa-lanc').value;
-                const tipo = document.getElementById('novo-despesa-tipo').value.trim();
-                const desc = document.getElementById('novo-despesa-desc').value.trim();
-                const valorTotal = parseFloat(document.getElementById('novo-despesa-valor').value) || 0;
-                const valorPagoInput = parseFloat(document.getElementById('novo-despesa-valorpago').value) || 0;
-                const venc = document.getElementById('novo-despesa-venc').value;
-
-                let monthName = '';
-                if (venc) {
-                    const dt = new Date(venc + 'T00:00:00');
-                    const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                    monthName = months[dt.getMonth()];
-                }
-
-                const novaDespesa = {
-                    id: Date.now(),
-                    codigo: codigo,
-                    dataLancamento: lanc || new Date().toISOString().split('T')[0],
-                    tipoDespesa: tipo,
-                    descricao: desc,
-                    mes: monthName,
-                    valor: valorTotal,
-                    valorPago: valorPagoInput,
-                    dataVencimento: venc,
-                    status: valorPagoInput > 0 ? 'Pago' : 'Pendente'
-                };
-
-                despesas.push(novaDespesa);
-                saveAndSyncData();
-                document.getElementById('form-nova-despesa').reset();
-
-                alert('Despesa cadastrada com sucesso!');
-                switchTab('despesas');
-                updateAll();
-            });
-
-            document.getElementById('form-entrada').addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (currentUser && currentUser.role !== 'MASTER') return;
-                const editId = document.getElementById('entrada-edit-id').value;
-                const valor = parseFloat(document.getElementById('entrada-valor').value);
-                const descricao = document.getElementById('entrada-descricao').value.trim();
-                const data = document.getElementById('entrada-data').value;
-
-                if (editId) {
-                    const idx = entradas.findIndex(item => item.id == editId);
-                    if (idx !== -1) {
-                        entradas[idx] = { id: Number(editId), valor, descricao, data };
-                    }
-                } else {
-                    entradas.push({ id: Date.now(), valor, descricao, data });
-                }
-
-                saveAndSyncData();
-                cancelEditEntrada();
-                updateAll();
-            });
-
-            document.getElementById('form-edit-despesa').addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (currentUser && currentUser.role !== 'MASTER') return;
-                const id = document.getElementById('edit-despesa-id').value;
-                const idx = despesas.findIndex(d => d.id == id);
-                if (idx !== -1) {
-                    const valTotal = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
-                    const valPago = parseFloat(document.getElementById('edit-despesa-valorpago').value) || 0;
-
-                    despesas[idx].codigo = parseInt(document.getElementById('edit-despesa-codigo').value) || 1;
-                    despesas[idx].dataLancamento = document.getElementById('edit-despesa-lanc').value;
-                    despesas[idx].tipoDespesa = document.getElementById('edit-despesa-tipo').value.trim();
-                    despesas[idx].descricao = document.getElementById('edit-despesa-desc').value.trim();
-                    despesas[idx].valor = valTotal;
-                    despesas[idx].valorPago = valPago;
-                    despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
-                    despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
-
-                    saveAndSyncData();
-                    closeEditDespesaModal();
-                    updateAll();
-                }
-            });
-
-            document.getElementById('form-cad-user').addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (currentUser && currentUser.role !== 'MASTER') return;
-                const email = document.getElementById('cad-user-email').value.trim();
-                const pass = document.getElementById('cad-user-pass').value.trim();
-                if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-                    alert('Usuário já cadastrado!');
-                    return;
-                }
-                users.push({ email, pass, role: 'OPERADOR' });
-                localStorage.setItem('stanize_users', JSON.stringify(users));
-                document.getElementById('form-cad-user').reset();
-                renderUsers();
-            });
-
-            document.getElementById('excel-file-input').addEventListener('change', handleFileUpload);
         });
 
         function initSupabaseFromConfig() {
@@ -920,7 +314,6 @@
                     if (data.entradas) entradas = data.entradas;
                     localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                     localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
-                    updateAll();
                 }
                 document.getElementById('sync-status-text').textContent = "Nuvem Conectada";
             } catch(err) {
@@ -942,796 +335,19 @@
 
             if (currentUser.role === 'MASTER') {
                 document.getElementById('nav-usuarios').classList.remove('hidden');
-                document.getElementById('mob-nav-usuarios').classList.remove('hidden');
-                document.body.classList.remove('operator-readonly');
-                renderAdminVisibilityPanel();
-            } else {
-                document.getElementById('nav-usuarios').classList.add('hidden');
-                document.getElementById('mob-nav-usuarios').classList.add('hidden');
-                document.body.classList.add('operator-readonly');
-                applyOperatorVisibility();
+                document.getElementById('mob-nav-usuarios')?.classList.remove('hidden');
             }
-            renderUsers();
-            updateAll();
         }
 
         function logout() {
             currentUser = null;
             document.getElementById('app').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('login-form').reset();
-            document.getElementById('login-error').classList.add('hidden');
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-dark-card', 'text-white', 'shadow');
-                btn.classList.add('text-zinc-400');
-            });
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-dark-card', 'text-white', 'shadow');
-                activeBtn.classList.remove('text-zinc-400');
-            }
-            if (tabId === 'diretoria') {
-                updateDiretoria();
-            }
-            if (currentUser && currentUser.role !== 'MASTER') {
-                applyOperatorVisibility();
-            }
-        }
-
-        function renderAdminVisibilityPanel() {
-            const container = document.getElementById('visibility-toggles-container');
-            container.innerHTML = '';
-            for (const [key, label] of Object.entries(visibilityLabels)) {
-                const isChecked = operatorVisibility[key] !== false ? 'checked' : '';
-                container.innerHTML += `
-                    <div class="bg-dark-bg border border-dark-border p-4 rounded-xl flex items-center justify-between">
-                        <span class="text-xs font-semibold text-zinc-300">${label}</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" ${isChecked} onchange="toggleOperatorVisibility('${key}', this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600"></div>
-                        </label>
-                    </div>
-                `;
-            }
-        }
-
-        function toggleOperatorVisibility(key, isVisible) {
-            operatorVisibility[key] = isVisible;
-            localStorage.setItem('stanize_operator_visibility', JSON.stringify(operatorVisibility));
-        }
-
-        function applyOperatorVisibility() {
-            if (!currentUser || currentUser.role === 'MASTER') return;
-            for (const [key, isVisible] of Object.entries(operatorVisibility)) {
-                const el = document.getElementById(key);
-                if (el) {
-                    if (isVisible) {
-                        el.classList.remove('hidden');
-                    } else {
-                        el.classList.add('hidden');
-                    }
-                }
-            }
-        }
-
-        function setQuickPeriodFilter(period) {
-            quickPeriodFilter = period;
-            document.querySelectorAll('.btn-period').forEach(b => {
-                b.classList.remove('bg-dark-card', 'text-white');
-                b.classList.add('text-zinc-400');
-            });
-            const activeB = document.getElementById(`btn-period-${period}`);
-            if (activeB) {
-                activeB.classList.add('bg-dark-card', 'text-white');
-                activeB.classList.remove('text-zinc-400');
-            }
-            updateAll();
-        }
-
-        function getFilteredData() {
-            const start = document.getElementById('filter-start-date').value;
-            const end = document.getElementById('filter-end-date').value;
-
-            let fDespesas = [...despesas];
-            let fEntradas = [...entradas];
-
-            if (start) {
-                fDespesas = fDespesas.filter(d => (d.dataVencimento || d.dataLancamento) >= start);
-                fEntradas = fEntradas.filter(e => e.data >= start);
-            }
-            if (end) {
-                fDespesas = fDespesas.filter(d => (d.dataVencimento || d.dataLancamento) <= end);
-                fEntradas = fEntradas.filter(e => e.data <= end);
-            }
-
-            if (activeCategoryFilter) {
-                fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
-            }
-
-            if (quickPeriodFilter !== 'all') {
-                const now = new Date();
-                const todayStr = now.toISOString().split('T')[0];
-
-                if (quickPeriodFilter === 'day') {
-                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataLancamento === todayStr));
-                } else if (quickPeriodFilter === 'week') {
-                    const startOfWeek = new Date(now);
-                    startOfWeek.setDate(now.getDate() - now.getDay());
-                    const endOfWeek = new Date(startOfWeek);
-                    endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-                    const sStr = startOfWeek.toISOString().split('T')[0];
-                    const eStr = endOfWeek.toISOString().split('T')[0];
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        return dt >= sStr && dt <= eStr;
-                    });
-                } else if (quickPeriodFilter === 'month') {
-                    const currentMonth = now.getMonth();
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        const p = new Date(dt + 'T00:00:00');
-                        return p.getMonth() === currentMonth && p.getFullYear() === currentYear;
-                    });
-                } else if (quickPeriodFilter === 'year') {
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        return new Date(dt + 'T00:00:00').getFullYear() === currentYear;
-                    });
-                }
-            }
-
-            return { fDespesas, fEntradas };
-        }
-
-        function updateAll() {
-            const { fDespesas, fEntradas } = getFilteredData();
-            const totalEntradas = fEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
-            const totalSaidas = fDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
-            const saldo = totalEntradas - totalSaidas;
-
-            const pagas = despesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
-            const pendentes = totalSaidas - pagas;
-
-            document.getElementById('kpi-entradas').textContent = formatCurrency(totalEntradas);
-            document.getElementById('kpi-saidas').textContent = formatCurrency(totalSaidas);
-            document.getElementById('kpi-saldo').textContent = formatCurrency(saldo);
-            document.getElementById('kpi-pagas').textContent = formatCurrency(pagas);
-            document.getElementById('kpi-pendentes').textContent = formatCurrency(pendentes);
-
-            if (activeCategoryFilter) {
-                document.getElementById('active-filter-badge').classList.remove('hidden');
-                document.getElementById('active-filter-badge').classList.add('flex');
-                document.getElementById('filter-badge-text').textContent = activeCategoryFilter;
-            } else {
-                document.getElementById('active-filter-badge').classList.add('hidden');
-                document.getElementById('active-filter-badge').classList.remove('flex');
-            }
-
-            renderTables();
-            renderCharts(fEntradas, fDespesas);
-            updateDiretoria();
-
-            if (currentUser && currentUser.role !== 'MASTER') {
-                applyOperatorVisibility();
-                const importDesp = document.getElementById('wrapper-import-despesas');
-                if (importDesp) importDesp.classList.add('hidden');
-                document.querySelectorAll('.col-acoes-header, .col-select-header').forEach(el => el.classList.add('hidden'));
-            }
-        }
-
-        function clearCategoryFilter() {
-            activeCategoryFilter = null;
-            updateAll();
-        }
-
-        function clearDateFilter() {
-            document.getElementById('filter-start-date').value = '';
-            document.getElementById('filter-end-date').value = '';
-            updateAll();
-        }
-
-        function formatCurrency(val) {
-            return (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        function toggleSelectAll(masterCheckbox) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            const { fDespesas } = getFilteredData();
-            const contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
-            if (masterCheckbox.checked) {
-                contasPagar.forEach(d => selectedDespesasIds.add(d.id));
-            } else {
-                selectedDespesasIds.clear();
-            }
-            renderTables();
-        }
-
-        function toggleSelectDespesa(id, checkbox) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            if (checkbox.checked) {
-                selectedDespesasIds.add(id);
-            } else {
-                selectedDespesasIds.delete(id);
-            }
-            updateBulkBar();
-        }
-
-        function updateBulkBar() {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            const bar = document.getElementById('bulk-actions-bar');
-            const countSpan = document.getElementById('selected-count');
-            countSpan.textContent = selectedDespesasIds.size;
-            if (selectedDespesasIds.size > 0) {
-                bar.classList.remove('hidden');
-            } else {
-                bar.classList.add('hidden');
-            }
-        }
-
-        function deleteSelectedDespesas() {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            if (selectedDespesasIds.size === 0) return;
-            if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens selecionados?`)) {
-                despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
-                selectedDespesasIds.clear();
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function deleteAllDespesas() {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            if (confirm('ATENÇÃO: Deseja realmente excluir TODAS as despesas cadastradas no sistema? Esta ação não pode ser desfeita.')) {
-                despesas = [];
-                selectedDespesasIds.clear();
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function updateValorPagoDirectly(id, inputElement) {
-            if (currentUser && currentUser.role !== 'MASTER') {
-                inputElement.value = inputElement.defaultValue;
-                alert('Acesso negado: Apenas o usuário Master pode alterar dados.');
-                return;
-            }
-            const valPago = parseFloat(inputElement.value) || 0;
-            const idx = despesas.findIndex(d => d.id == id);
-            if (idx !== -1) {
-                despesas[idx].valorPago = valPago;
-                despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
-
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function renderTables() {
-            const { fDespesas, fEntradas } = getFilteredData();
-            const search = document.getElementById('search-despesas')?.value.toLowerCase() || '';
-
-            const tbodyDespesas = document.getElementById('table-despesas-body');
-            tbodyDespesas.innerHTML = '';
-
-            let contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
-
-            contasPagar.sort((a, b) => {
-                const dtA = a.dataVencimento || '9999-12-31';
-                const dtB = b.dataVencimento || '9999-12-31';
-                return dtA.localeCompare(dtB);
-            });
-
-            const filteredDesp = contasPagar.filter(d => 
-                (d.descricao || '').toLowerCase().includes(search) || 
-                (d.tipoDespesa || '').toLowerCase().includes(search) ||
-                String(d.codigo || '').toLowerCase().includes(search)
-            );
-
-            const isMaster = currentUser && currentUser.role === 'MASTER';
-
-            if (filteredDesp.length === 0) {
-                tbodyDespesas.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-zinc-500">Nenhuma conta a pagar pendente.</td></tr>`;
-            } else {
-                filteredDesp.forEach(d => {
-                    const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
-                    const catColor = getCategoryColor(d.tipoDespesa);
-
-                    const checkboxTd = isMaster ? `<td class="p-3 text-center"><input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer"></td>` : '';
-                    const valorPagoInput = isMaster ? `<input type="number" step="0.01" value="${d.valorPago || ''}" onchange="updateValorPagoDirectly(${d.id}, this)" placeholder="0.00" class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">` : `<span>${formatCurrency(d.valorPago || 0)}</span>`;
-                    const acoesTd = isMaster ? `<td class="p-3 text-center"><div class="flex items-center justify-center gap-2"><button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>` : '';
-
-                    tbodyDespesas.innerHTML += `
-                        <tr class="hover:bg-dark-hover/50 transition">
-                            ${checkboxTd}
-                            <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
-                            <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
-                            <td class="p-3 font-medium text-white flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
-                                ${d.tipoDespesa || 'Geral'}
-                            </td>
-                            <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
-                            <td class="p-3">${d.mes || '-'}</td>
-                            <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
-                            <td class="p-3 text-right">${valorPagoInput}</td>
-                            <td class="p-3 font-semibold text-amber-300">${formatDateBR(d.dataVencimento)}</td>
-                            <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                    Pendente
-                                </span>
-                            </td>
-                            ${acoesTd}
-                        </tr>
-                    `;
-                });
-            }
-
-            if(isMaster) updateBulkBar();
-
-            const tbodyEntradas = document.getElementById('table-entradas-body');
-            tbodyEntradas.innerHTML = '';
-            fEntradas.forEach(e => {
-                const acoesEnt = isMaster ? `<td class="p-3 text-center"><div class="flex items-center justify-center gap-2"><button onclick="startEditEntrada(${e.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>` : '';
-                tbodyEntradas.innerHTML += `
-                    <tr class="hover:bg-dark-hover/50 transition">
-                        <td class="p-3">${formatDateBR(e.data)}</td>
-                        <td class="p-3 font-medium text-white">${e.descricao}</td>
-                        <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
-                        ${acoesEnt}
-                    </tr>
-                `;
-            });
-            lucide.createIcons();
-        }
-
-        function openEditDespesaModal(id) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            const d = despesas.find(item => item.id == id);
-            if (!d) return;
-
-            document.getElementById('edit-despesa-id').value = d.id;
-            document.getElementById('edit-despesa-codigo').value = d.codigo || 1;
-            document.getElementById('edit-despesa-lanc').value = d.dataLancamento || '';
-            document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
-            document.getElementById('edit-despesa-desc').value = d.descricao || '';
-            document.getElementById('edit-despesa-valor').value = d.valor || 0;
-            document.getElementById('edit-despesa-valorpago').value = d.valorPago || 0;
-            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
-
-            document.getElementById('modal-edit-despesa').classList.remove('hidden');
-        }
-
-        function closeEditDespesaModal() {
-            document.getElementById('modal-edit-despesa').classList.add('hidden');
-        }
-
-        function deleteDespesa(id) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
-                despesas = despesas.filter(d => d.id != id);
-                selectedDespesasIds.delete(id);
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function startEditEntrada(id) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            const e = entradas.find(item => item.id == id);
-            if (!e) return;
-
-            document.getElementById('entrada-edit-id').value = e.id;
-            document.getElementById('entrada-valor').value = e.valor;
-            document.getElementById('entrada-descricao').value = e.descricao;
-            document.getElementById('entrada-data').value = e.data;
-
-            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Entrada';
-            document.getElementById('btn-cancelar-entrada').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function cancelEditEntrada() {
-            document.getElementById('form-entrada').reset();
-            document.getElementById('entrada-edit-id').value = '';
-            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada';
-            document.getElementById('btn-cancelar-entrada').classList.add('hidden');
-            lucide.createIcons();
-        }
-
-        function deleteEntrada(id) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            if (confirm('Tem certeza de que deseja excluir esta entrada?')) {
-                entradas = entradas.filter(e => e.id !== id);
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function renderCharts(fEntradas, fDespesas) {
-            if (charts.tipo) charts.tipo.destroy();
-            if (charts.despTipo) charts.despTipo.destroy();
-            if (charts.despDesc) charts.despDesc.destroy();
-            if (charts.fluxo) charts.fluxo.destroy();
-
-            const handleChartClick = (evt, elements, chartInstance) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const label = chartInstance.data.labels[index];
-                    activeCategoryFilter = label;
-                    updateAll();
-                }
-            };
-
-            const tipoMap = {};
-            fDespesas.forEach(d => {
-                const tipo = d.tipoDespesa || 'Outros';
-                tipoMap[tipo] = (tipoMap[tipo] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const tipoLabels = Object.keys(tipoMap);
-            const tipoColors = getColorsForCategories(tipoLabels);
-
-            charts.tipo = new Chart(document.getElementById('chart-tipo-despesa').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: tipoLabels.length ? tipoLabels : ['Sem dados'],
-                    datasets: [{ 
-                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], 
-                        backgroundColor: tipoLabels.length ? tipoColors : ['#3f3f46'] 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } } }
-            });
-
-            charts.despTipo = new Chart(document.getElementById('chart-despesas-tipo').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: tipoLabels,
-                    datasets: [{ 
-                        label: 'Valor por Tipo', 
-                        data: Object.values(tipoMap), 
-                        backgroundColor: tipoColors, 
-                        borderRadius: 4 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
-
-            const descMap = {};
-            fDespesas.forEach(d => {
-                const desc = d.descricao || 'Outros';
-                descMap[desc] = (descMap[desc] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const descLabels = Object.keys(descMap);
-            const descColors = getColorsForCategories(descLabels);
-
-            charts.despDesc = new Chart(document.getElementById('chart-despesas-desc').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: descLabels,
-                    datasets: [{ 
-                        label: 'Valor por Descrição', 
-                        data: Object.values(descMap), 
-                        backgroundColor: descColors, 
-                        borderRadius: 4 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
-
-            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const entMensal = new Array(12).fill(0);
-            const saiMensal = new Array(12).fill(0);
-            fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
-            fDespesas.forEach(d => {
-                const dt = d.dataVencimento || d.dataLancamento;
-                let m = -1;
-                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                    m = monthMap[String(d.mes).toLowerCase().trim()];
-                } else if (dt) {
-                    m = new Date(dt + 'T00:00:00').getMonth();
-                }
-                if (m >= 0 && m < 12) saiMensal[m] += d.valor;
-            });
-
-            charts.fluxo = new Chart(document.getElementById('chart-fluxo-mensal').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'Entradas', data: entMensal, backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'Saídas', data: saiMensal, backgroundColor: '#7c3aed', borderRadius: 4 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
-        }
-
-        function updateDiretoria() {
-            const selectedMonth = document.getElementById('dir-month-select').value;
-
-            let dDespesas = [...despesas];
-            let dEntradas = [...entradas];
-
-            let monthsLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            let entComp = new Array(12).fill(0);
-            let saiComp = new Array(12).fill(0);
-
-            entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
-            despesas.forEach(d => {
-                const dt = d.dataVencimento || d.dataLancamento;
-                let m = -1;
-                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                    m = monthMap[String(d.mes).toLowerCase().trim()];
-                } else if (dt) {
-                    m = new Date(dt + 'T00:00:00').getMonth();
-                }
-                if (m >= 0 && m < 12) saiComp[m] += d.valor;
-            });
-
-            if (selectedMonth !== 'all') {
-                const m = parseInt(selectedMonth);
-                monthsLabels = [monthsLabels[m]];
-                entComp = [entComp[m]];
-                saiComp = [saiComp[m]];
-
-                dDespesas = dDespesas.filter(d => {
-                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                        return monthMap[String(d.mes).toLowerCase().trim()] === m;
-                    }
-                    const dt = d.dataVencimento || d.dataLancamento;
-                    if (dt) {
-                        const parsed = new Date(dt + 'T00:00:00');
-                        return !isNaN(parsed) && parsed.getMonth() === m;
-                    }
-                    return false;
-                });
-
-                dEntradas = dEntradas.filter(e => {
-                    if (!e.data) return false;
-                    const parsed = new Date(e.data + 'T00:00:00');
-                    return !isNaN(parsed) && parsed.getMonth() === m;
-                });
-            }
-
-            const totalEntradas = dEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
-            const totalSaidas = dDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
-            const resultado = totalEntradas - totalSaidas;
-
-            const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + d.valor, 0);
-            const pendentes = totalSaidas - pagas;
-
-            document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
-            document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
-            document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
-            document.getElementById('dir-kpi-resultado').className = `text-2xl font-black mt-1 ${resultado >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-            document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
-
-            if (charts.dirCompMensal) charts.dirCompMensal.destroy();
-            charts.dirCompMensal = new Chart(document.getElementById('dir-chart-comparativo-mensal').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: monthsLabels,
-                    datasets: [
-                        { label: 'Entradas (Faturamento)', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
-                        { label: 'Saídas (Custos)', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
-                }
-            });
-
-            if (charts.dirBalanco) charts.dirBalanco.destroy();
-            charts.dirBalanco = new Chart(document.getElementById('dir-chart-balanco').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Entradas (Créditos)', 'Saídas (Custos)'],
-                    datasets: [{
-                        data: [totalEntradas, totalSaidas],
-                        backgroundColor: ['#10b981', '#ef4444'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
-                }
-            });
-
-            const tipoMap = {};
-            dDespesas.forEach(d => {
-                const t = d.tipoDespesa || 'Geral';
-                tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const dirTipoKeys = Object.keys(tipoMap);
-            const dirTipoColors = getColorsForCategories(dirTipoKeys);
-
-            if (charts.dirTipoMês) charts.dirTipoMês.destroy();
-            charts.dirTipoMês = new Chart(document.getElementById('dir-chart-tipo').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
-                    datasets: [{
-                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1],
-                        backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } }
-                }
-            });
-        }
-
-        function formatDateVal(val) {
-            if (!val) return '';
-            if (val instanceof Date) {
-                const y = val.getFullYear();
-                const m = String(val.getMonth() + 1).padStart(2, '0');
-                const d = String(val.getDate()).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            }
-            const s = String(val).trim();
-            if (s.includes('/')) {
-                const parts = s.split('/');
-                if (parts.length === 3) {
-                    if (parts[0].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`;
-                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
-                }
-            }
-            return s.substring(0, 10);
-        }
-
-        function formatDateBR(val) {
-            if (!val) return '-';
-            const s = String(val).trim();
-            if (s.includes('-')) {
-                const parts = s.split('T')[0].split('-');
-                if (parts.length === 3) {
-                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-                }
-            }
-            return s;
-        }
-
-        function handleFileUpload(e) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                if (json.length < 2) return;
-
-                let atualizados = 0;
-                let novos = 0;
-
-                for (let i = 1; i < json.length; i++) {
-                    const row = json[i];
-                    if (!row || row.length === 0) continue;
-
-                    const codigo = parseInt(row[0]) || i;
-                    const valTotal = parseFloat(row[5]) || 0;
-                    const valPago = parseFloat(row[6]) || 0;
-                    if (valTotal === 0 && !row[3]) continue;
-
-                    let monthName = String(row[4] || '').trim();
-                    const venc = formatDateVal(row[7]);
-                    if (!monthName && venc) {
-                        const dt = new Date(venc + 'T00:00:00');
-                        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                        monthName = months[dt.getMonth()];
-                    }
-
-                    const itemImportado = {
-                        codigo: codigo,
-                        dataLancamento: formatDateVal(row[1]),
-                        tipoDespesa: row[2] || 'Geral',
-                        descricao: row[3] || 'Sem Descrição',
-                        mes: monthName,
-                        valor: valTotal,
-                        valorPago: valPago,
-                        dataVencimento: venc,
-                        status: valPago > 0 ? 'Pago' : 'Pendente'
-                    };
-
-                    const indexExistente = despesas.findIndex(d => Number(d.codigo) === Number(itemImportado.codigo));
-
-                    if (indexExistente !== -1) {
-                        despesas[indexExistente].valorPago = itemImportado.valorPago;
-                        despesas[indexExistente].status = itemImportado.valorPago > 0 ? 'Pago' : 'Pendente';
-                        despesas[indexExistente].valor = itemImportado.valor || despesas[indexExistente].valor;
-                        despesas[indexExistente].dataVencimento = itemImportado.dataVencimento || despesas[indexExistente].dataVencimento;
-                        despesas[indexExistente].dataLancamento = itemImportado.dataLancamento || despesas[indexExistente].dataLancamento;
-                        despesas[indexExistente].tipoDespesa = itemImportado.tipoDespesa || despesas[indexExistente].tipoDespesa;
-                        despesas[indexExistente].descricao = itemImportado.descricao || despesas[indexExistente].descricao;
-                        atualizados++;
-                    } else {
-                        despesas.push({ id: Date.now() + i, ...itemImportado });
-                        novos++;
-                    }
-                }
-
-                saveAndSyncData();
-                alert(`Planilha importada!
-• ${novos} novos itens.
-• ${atualizados} itens atualizados pelo código.`);
-                updateAll();
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function exportData() {
-            const dataToExport = despesas.length ? despesas.map(d => ({
-                'Codigo': d.codigo || 1,
-                'Lançamento': d.dataLancamento ? formatDateBR(d.dataLancamento) : '',
-                'Tipo Despesa': d.tipoDespesa || '',
-                'Descrição': d.descricao || '',
-                'Mês': d.mes || '',
-                'Valor Total': d.valor || 0,
-                'Valor Pago': d.valorPago || 0,
-                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : ''
-            })) : [{
-                'Codigo': 1,
-                'Lançamento': '05/01/2026',
-                'Tipo Despesa': 'Operacional',
-                'Descrição': 'Exemplo de Despesa',
-                'Mês': 'Janeiro',
-                'Valor Total': 1500.00,
-                'Valor Pago': 0,
-                'Vencimento': '15/01/2026'
-            }];
-            const ws = XLSX.utils.json_to_sheet(dataToExport);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
-            XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
-        }
-
-        function renderUsers() {
-            const tbody = document.getElementById('table-users-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            users.forEach((u, idx) => {
-                const isMaster = currentUser && currentUser.role === 'MASTER';
-                const deleteBtn = (isMaster && u.role !== 'MASTER') ? `<button onclick="deleteUser(${idx})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : '-';
-                tbody.innerHTML += `
-                    <tr class="hover:bg-dark-hover/50 transition">
-                        <td class="p-3 font-medium text-white">${u.email}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'MASTER' ? 'bg-brand-500/20 text-brand-400' : 'bg-zinc-800 text-zinc-300'}">${u.role}</span></td>
-                        <td class="p-3 text-center">${deleteBtn}</td>
-                    </tr>
-                `;
-            });
-            lucide.createIcons();
-        }
-
-        function deleteUser(idx) {
-            if (currentUser && currentUser.role !== 'MASTER') return;
-            users.splice(idx, 1);
-            localStorage.setItem('stanize_users', JSON.stringify(users));
-            renderUsers();
         }
     </script>
 </body>
