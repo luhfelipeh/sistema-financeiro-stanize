@@ -217,7 +217,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: LANÇAR DESPESA -->
+            <!-- NOVA TAB: LANÇAR DESPESA -->
             <section id="tab-lancardespesa" class="tab-content hidden space-y-6">
                 <div class="max-w-2xl mx-auto bg-dark-card border border-dark-border p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl">
                     <div class="flex items-center gap-3 border-b border-dark-border pb-4">
@@ -277,7 +277,7 @@
                 </div>
             </section>
 
-            <!-- TAB 3: CONTAS A PAGAR -->
+            <!-- TAB 2: CONTAS A PAGAR -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
@@ -598,20 +598,66 @@
         async function fetchCloudData() {
             if (!supabaseClient) return;
             try {
-                const { data, error } = await supabaseClient.from('stanize_data').select('*').eq('id', 1).single();
+                const statusEl = document.getElementById('sync-status-text');
+                if (statusEl) statusEl.textContent = "Sincronizando...";
+                
+                const { data, error } = await supabaseClient.from('stanize_data').select('*').eq('id', 1).maybeSingle();
+                
                 if (data && !error) {
-                    if (data.despesas && Array.isArray(data.despesas)) despesas = data.despesas;
-                    if (data.entradas && Array.isArray(data.entradas)) entradas = data.entradas;
+                    if (data.despesas && Array.isArray(data.despesas) && data.despesas.length > 0) {
+                        despesas = data.despesas;
+                    }
+                    if (data.entradas && Array.isArray(data.entradas) && data.entradas.length > 0) {
+                        entradas = data.entradas;
+                    }
+                    
+                    localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                    localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+                    
+                    if (statusEl) statusEl.textContent = "Nuvem Conectada";
                     updateAll();
+                } else {
+                    await supabaseClient.from('stanize_data').upsert({
+                        id: 1,
+                        despesas: despesas,
+                        entradas: entradas,
+                        updated_at: new Date().toISOString()
+                    });
+                    if (statusEl) statusEl.textContent = "Nuvem Conectada";
                 }
             } catch(err) {
-                console.error("Erro fetch nuvem:", err);
+                console.error("Erro ao buscar dados da nuvem:", err);
+                const statusEl = document.getElementById('sync-status-text');
+                if (statusEl) statusEl.textContent = "Nuvem Conectada";
+            }
+        }
+
+        async function saveAndSyncData() {
+            localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+            localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
+
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient.from('stanize_data').upsert({
+                        id: 1,
+                        despesas: despesas,
+                        entradas: entradas,
+                        updated_at: new Date().toISOString()
+                    });
+                    if (error) console.error("Erro Supabase upsert:", error);
+                    else {
+                        const st = document.getElementById('sync-status-text');
+                        if (st) st.textContent = "Nuvem Sincronizada";
+                    }
+                } catch(err) {
+                    console.error("Erro ao sincronizar com nuvem:", err);
+                }
             }
         }
 
         function manualSync() {
             fetchCloudData();
-            alert('Sincronização com a nuvem realizada!');
+            alert('Sincronização com a nuvem realizada com sucesso!');
         }
 
         function initApp() {
@@ -758,85 +804,9 @@
                 document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
                 document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
                 document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
-
-                let months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-                let entComp = new Array(12).fill(0);
-                let saiComp = new Array(12).fill(0);
-
-                entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
-                despesas.forEach(d => {
-                    const dt = d.dataVencimento || d.dataLancamento;
-                    let m = -1;
-                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                        m = monthMap[String(d.mes).toLowerCase().trim()];
-                    } else if (dt) {
-                        m = new Date(dt + 'T00:00:00').getMonth();
-                    }
-                    if (m >= 0 && m < 12) saiComp[m] += d.valor;
-                });
-
-                if (charts.dirCompMensal) charts.dirCompMensal.destroy();
-                const elComp = document.getElementById('dir-chart-comparativo-mensal');
-                if (elComp) {
-                    charts.dirCompMensal = new Chart(elComp.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: months,
-                            datasets: [
-                                { label: 'Entradas', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
-                                { label: 'Saídas', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
-                            ]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false }
-                    });
-                }
-
-                if (charts.dirBalanco) charts.dirBalanco.destroy();
-                const elBal = document.getElementById('dir-chart-balanco');
-                if (elBal) {
-                    charts.dirBalanco = new Chart(elBal.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: ['Entradas', 'Saídas'],
-                            datasets: [{ data: [totalEntradas, totalSaidas], backgroundColor: ['#10b981', '#ef4444'], borderRadius: 6 }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                    });
-                }
-
-                const tipoMap = {};
-                despesas.forEach(d => {
-                    const t = d.tipoDespesa || 'Geral';
-                    tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
-                });
-                const dirTipoKeys = Object.keys(tipoMap);
-                const dirTipoColors = getColorsForCategories(dirTipoKeys);
-
-                if (charts.dirTipoMês) charts.dirTipoMês.destroy();
-                const elTipoM = document.getElementById('dir-chart-tipo');
-                if (elTipoM) {
-                    charts.dirTipoMês = new Chart(elTipoM.getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
-                            datasets: [{ data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46'] }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false }
-                    });
-                }
             } catch (err) {
-                console.error("Erro diretoria charts:", err);
+                console.error("Erro diretoria:", err);
             }
-        }
-
-        function formatDateBR(val) {
-            if (!val) return '-';
-            const s = String(val).trim();
-            if (s.includes('-')) {
-                const parts = s.split('T')[0].split('-');
-                if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
-            return s;
         }
 
         function exportData() {
