@@ -1044,7 +1044,7 @@
                                 <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                             </td>
                             <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
-                            <td class="p-3">${d.dataLancamento || '-'}</td>
+                            <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
                             <td class="p-3 font-medium text-white flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
                                 ${d.tipoDespesa || 'Geral'}
@@ -1060,7 +1060,7 @@
                                        class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
                             </td>
 
-                            <td class="p-3 font-semibold text-amber-300">${d.dataVencimento || '-'}</td>
+                            <td class="p-3 font-semibold text-amber-300">${formatDateBR(d.dataVencimento)}</td>
                             <td class="p-3 text-center">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                     Pendente
@@ -1084,7 +1084,7 @@
             fEntradas.forEach(e => {
                 tbodyEntradas.innerHTML += `
                     <tr class="hover:bg-dark-hover/50 transition">
-                        <td class="p-3">${e.data}</td>
+                        <td class="p-3">${formatDateBR(e.data)}</td>
                         <td class="p-3 font-medium text-white">${e.descricao}</td>
                         <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
                         <td class="p-3 text-center">
@@ -1455,6 +1455,18 @@
             return s.substring(0, 10);
         }
 
+        function formatDateBR(val) {
+            if (!val) return '-';
+            const s = String(val).trim();
+            if (s.includes('-')) {
+                const parts = s.split('T')[0].split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+            }
+            return s;
+        }
+
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1532,22 +1544,22 @@
             // SEQUÊNCIA EXATA DA IMAGEM: Codigo | Lançamento | Tipo Despesa | Descrição | Mês | Valor Total | Valor Pago | Vencimento
             const dataToExport = despesas.length ? despesas.map(d => ({
                 'Codigo': d.codigo || 1,
-                'Lançamento': d.dataLancamento || '',
+                'Lançamento': d.dataLancamento ? formatDateBR(d.dataLancamento) : '',
                 'Tipo Despesa': d.tipoDespesa || '',
                 'Descrição': d.descricao || '',
                 'Mês': d.mes || '',
                 'Valor Total': d.valor || 0,
                 'Valor Pago': d.valorPago || 0,
-                'Vencimento': d.dataVencimento || ''
+                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : ''
             })) : [{
                 'Codigo': 1,
-                'Lançamento': '2026-01-05',
+                'Lançamento': '05/01/2026',
                 'Tipo Despesa': 'Operacional',
                 'Descrição': 'Exemplo de Despesa',
                 'Mês': 'Janeiro',
                 'Valor Total': 1500.00,
                 'Valor Pago': 0,
-                'Vencimento': '2026-01-15'
+                'Vencimento': '15/01/2026'
             }];
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
