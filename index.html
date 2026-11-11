@@ -277,7 +277,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: CONTAS A PAGAR (APENAS CONTAS COM VALOR PAGO ZERADO, CLASSIFICADO POR VENCIMENTO) -->
+            <!-- TAB 2: CONTAS A PAGAR -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
@@ -405,9 +405,8 @@
                 </div>
             </section>
 
-            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO COMPLETO -->
+            <!-- TAB 4: DIRETORIA -->
             <section id="tab-diretoria" class="tab-content hidden space-y-6">
-                <!-- TOP HEADER BAR COM SELETOR DE MÊS -->
                 <div class="bg-gradient-to-r from-zinc-900 via-dark-card to-brand-950/40 border border-brand-500/30 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
                     <div class="space-y-2">
                         <span class="px-3 py-1 bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">Relatório Executivo</span>
@@ -415,7 +414,6 @@
                         <p class="text-zinc-400 text-xs sm:text-sm">Compare receitas, custos e margem operacional com dados consolidados.</p>
                     </div>
 
-                    <!-- SELETOR DE MÊS DA DIRETORIA -->
                     <div class="bg-dark-bg border border-dark-border p-3 rounded-2xl flex items-center gap-3 w-full md:w-auto">
                         <i data-lucide="filter" class="w-5 h-5 text-brand-500"></i>
                         <div>
@@ -439,21 +437,14 @@
                     </div>
                 </div>
 
-                <!-- CARDS DE RESUMO EXECUTIVO DO MÊS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Receita (Entradas Mês)</div>
                         <div id="dir-kpi-entradas" class="text-2xl font-black text-emerald-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2 flex items-center gap-1">
-                            <i data-lucide="arrow-down-left" class="w-3.5 h-3.5 text-emerald-400"></i> Faturamento do mês
-                        </div>
                     </div>
                     <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Custos (Saídas Mês)</div>
                         <div id="dir-kpi-saidas" class="text-2xl font-black text-rose-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2 flex items-center gap-1">
-                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-rose-400"></i> Despesas totais do mês
-                        </div>
                     </div>
                     <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Resultado Líquido</div>
@@ -463,72 +454,29 @@
                     <div class="bg-dark-card border border-dark-border p-5 rounded-2xl relative overflow-hidden">
                         <div class="text-xs font-semibold text-zinc-400 uppercase">Contas em Aberto</div>
                         <div id="dir-kpi-pendente" class="text-2xl font-black text-amber-400 mt-1">R$ 0,00</div>
-                        <div class="text-[10px] text-zinc-500 mt-2">Pendente de liquidação</div>
                     </div>
                 </div>
 
-                <!-- GRÁFICO COMPARATIVO ENTRADAS X SAÍDAS MÊS A MÊS (Navegável) -->
                 <div class="bg-dark-card border border-brand-500/30 p-6 rounded-2xl space-y-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-dark-border pb-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Comparativo Mensal: Entradas vs Saídas
-                            </h3>
-                            <p class="text-xs text-zinc-400">Visualização dinâmica consolidada ou focada mês a mês</p>
-                        </div>
-                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Comparativo Mensal: Entradas vs Saídas
+                    </h3>
                     <div class="h-80"><canvas id="dir-chart-comparativo-mensal"></canvas></div>
                 </div>
 
-                <!-- GRÁFICOS DIRETORIA -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i> Balanço Geral (Créditos vs Custos)
-                        </h3>
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Balanço Geral</h3>
                         <div class="h-72"><canvas id="dir-chart-balanco"></canvas></div>
                     </div>
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4 flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-4 h-4 text-brand-500"></i> Distribuição dos Custos no Mês
-                        </h3>
+                        <h3 class="text-sm font-semibold text-zinc-200 uppercase mb-4">Distribuição dos Custos</h3>
                         <div class="h-72 flex items-center justify-center"><canvas id="dir-chart-tipo"></canvas></div>
-                    </div>
-                </div>
-
-                <!-- TABELA COMPARATIVA DE TIPOS DE DESPESA VS RECEITA -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center justify-between">
-                            <span>Impacto por Tipo de Despesa no Mês</span>
-                            <span class="text-xs text-zinc-400 font-normal">% referente às saídas</span>
-                        </h3>
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-xs text-zinc-300">
-                                <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
-                                    <tr>
-                                        <th class="p-3">Tipo de Despesa</th>
-                                        <th class="p-3 text-right">Custo Total</th>
-                                        <th class="p-3 text-right">Participação %</th>
-                                        <th class="p-3 text-center">Status no Mês</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dir-table-tipos-body" class="divide-y divide-dark-border"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- RANKING TOP MAIORES DESPESAS DO MÊS -->
-                    <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
-                        <h3 class="text-sm font-semibold text-zinc-200 uppercase flex items-center gap-2">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i> Top 5 Maiores Gastos
-                        </h3>
-                        <div id="dir-top-gastos-list" class="space-y-3"></div>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB 5: GESTÃO DE USUÁRIOS -->
+            <!-- TAB 5: USUÁRIOS -->
             <section id="tab-usuarios" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
@@ -544,7 +492,7 @@
                                 <label class="block text-xs font-medium text-zinc-400 mb-1">Senha</label>
                                 <input type="password" id="cad-user-pass" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
-                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-xl transition text-xs">
                                 Salvar Usuário
                             </button>
                         </form>
@@ -562,7 +510,6 @@
                     </div>
                 </div>
             </section>
-
         </main>
 
         <footer class="bg-dark-card border-t border-dark-border py-4 text-center text-xs text-zinc-500">
@@ -570,60 +517,58 @@
         </footer>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE DESPESA -->
+    <!-- MODAL DE EDIÇÃO -->
     <div id="modal-edit-despesa" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 px-4">
         <div class="bg-dark-card border border-dark-border p-6 rounded-2xl shadow-2xl w-full max-w-lg space-y-4">
             <div class="flex items-center justify-between border-b border-dark-border pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Despesa
-                </h3>
+                <h3 class="text-sm font-bold text-white">Editar Despesa</h3>
                 <button onclick="closeEditDespesaModal()" class="text-zinc-400 hover:text-white">✕</button>
             </div>
             <form id="form-edit-despesa" class="space-y-3">
                 <input type="hidden" id="edit-despesa-id">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Código (Número)</label>
-                        <input type="number" id="edit-despesa-codigo" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Código</label>
+                        <input type="number" id="edit-despesa-codigo" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Lançamento</label>
-                        <input type="date" id="edit-despesa-lanc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <input type="date" id="edit-despesa-lanc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Tipo de Despesa</label>
-                        <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Tipo</label>
+                        <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Descrição</label>
-                        <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Total (R$)</label>
-                        <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Total</label>
+                        <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$)</label>
-                        <input type="number" step="0.01" id="edit-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago</label>
+                        <input type="number" step="0.01" id="edit-despesa-valorpago" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
-                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white">
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeEditDespesaModal()" class="px-4 py-2 rounded-xl bg-zinc-800 text-xs text-zinc-300 hover:bg-zinc-700">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-medium hover:bg-brand-700">Salvar Alterações</button>
+                    <button type="button" onclick="closeEditDespesaModal()" class="px-4 py-2 rounded-xl bg-zinc-800 text-xs text-zinc-300">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-medium">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT DO SISTEMA -->
+    <!-- SCRIPT -->
     <script>
         const MASTER_EMAIL = "administrativo@stanize.com.br";
         const MASTER_PASS = "Lacan1404@";
@@ -640,40 +585,6 @@
         let quickPeriodFilter = 'all';
 
         let charts = {};
-
-        const COLOR_PALETTE = [
-            '#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
-            '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#f97316', 
-            '#6366f1', '#84cc16', '#d946ef', '#0284c7', '#eab308', 
-            '#a855f7', '#10b981', '#f43f5e', '#64748b', '#059669'
-        ];
-
-        let categoryColorMap = {};
-
-        function getCategoryColor(category) {
-            const catKey = String(category || 'Outros').trim();
-            if (!categoryColorMap[catKey]) {
-                const usedColors = Object.values(categoryColorMap);
-                const availableColor = COLOR_PALETTE.find(color => !usedColors.includes(color));
-                if (availableColor) {
-                    categoryColorMap[catKey] = availableColor;
-                } else {
-                    const hash = Array.from(catKey).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                    const hue = (hash * 137) % 360;
-                    categoryColorMap[catKey] = `hsl(${hue}, 70%, 55%)`;
-                }
-            }
-            return categoryColorMap[catKey];
-        }
-
-        function getColorsForCategories(categoriesArray) {
-            return categoriesArray.map(cat => getCategoryColor(cat));
-        }
-
-        const monthMap = {
-            'janeiro': 0, 'fevereiro': 1, 'março': 2, 'marco': 2, 'abril': 3, 'maio': 4, 'junho': 5,
-            'julho': 6, 'agosto': 7, 'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
-        };
 
         const SUPABASE_URL = "https://iqhlxwfjdhieqc.supabase.co";
         const SUPABASE_KEY = "sb_publishable_TAZ_tAWNqhqv0tWKuVN-sA_emVZcHeK";
@@ -698,7 +609,6 @@
                 }
             });
 
-            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA (Ordem Colunas A-H)
             document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const codigo = parseInt(document.getElementById('novo-despesa-codigo').value) || 1;
@@ -799,7 +709,6 @@
             document.getElementById('excel-file-input').addEventListener('change', handleFileUpload);
         });
 
-        
         function initSupabaseAutomatic() {
             try {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -810,8 +719,8 @@
         }
 
         async function saveAndSyncData() {
-            saveAndSyncData();
-            saveAndSyncData();
+            localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+            localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
 
             if (supabaseClient) {
                 try {
@@ -834,8 +743,8 @@
                 if (data && !error) {
                     if (data.despesas) despesas = data.despesas;
                     if (data.entradas) entradas = data.entradas;
-                    saveAndSyncData();
-                    saveAndSyncData();
+                    localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
+                    localStorage.setItem('stanize_entradas', JSON.stringify(entradas));
                     updateAll();
                 }
             } catch(err) {
@@ -921,43 +830,6 @@
                 fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
             }
 
-            if (quickPeriodFilter !== 'all') {
-                const now = new Date();
-                const todayStr = now.toISOString().split('T')[0];
-
-                if (quickPeriodFilter === 'day') {
-                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataLancamento === todayStr));
-                } else if (quickPeriodFilter === 'week') {
-                    const startOfWeek = new Date(now);
-                    startOfWeek.setDate(now.getDate() - now.getDay());
-                    const endOfWeek = new Date(startOfWeek);
-                    endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-                    const sStr = startOfWeek.toISOString().split('T')[0];
-                    const eStr = endOfWeek.toISOString().split('T')[0];
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        return dt >= sStr && dt <= eStr;
-                    });
-                } else if (quickPeriodFilter === 'month') {
-                    const currentMonth = now.getMonth();
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        const p = new Date(dt + 'T00:00:00');
-                        return p.getMonth() === currentMonth && p.getFullYear() === currentYear;
-                    });
-                } else if (quickPeriodFilter === 'year') {
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        return new Date(dt + 'T00:00:00').getFullYear() === currentYear;
-                    });
-                }
-            }
-
             return { fDespesas, fEntradas };
         }
 
@@ -976,96 +848,12 @@
             document.getElementById('kpi-pagas').textContent = formatCurrency(pagas);
             document.getElementById('kpi-pendentes').textContent = formatCurrency(pendentes);
 
-            if (activeCategoryFilter) {
-                document.getElementById('active-filter-badge').classList.remove('hidden');
-                document.getElementById('active-filter-badge').classList.add('flex');
-                document.getElementById('filter-badge-text').textContent = activeCategoryFilter;
-            } else {
-                document.getElementById('active-filter-badge').classList.add('hidden');
-                document.getElementById('active-filter-badge').classList.remove('flex');
-            }
-
             renderTables();
-            renderCharts(fEntradas, fDespesas);
             updateDiretoria();
-        }
-
-        function clearCategoryFilter() {
-            activeCategoryFilter = null;
-            updateAll();
-        }
-
-        function clearDateFilter() {
-            document.getElementById('filter-start-date').value = '';
-            document.getElementById('filter-end-date').value = '';
-            updateAll();
         }
 
         function formatCurrency(val) {
             return (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        function toggleSelectAll(masterCheckbox) {
-            const { fDespesas } = getFilteredData();
-            // Apenas contas a pagar (Valor Pago zerado/vazio)
-            const contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
-            if (masterCheckbox.checked) {
-                contasPagar.forEach(d => selectedDespesasIds.add(d.id));
-            } else {
-                selectedDespesasIds.clear();
-            }
-            renderTables();
-        }
-
-        function toggleSelectDespesa(id, checkbox) {
-            if (checkbox.checked) {
-                selectedDespesasIds.add(id);
-            } else {
-                selectedDespesasIds.delete(id);
-            }
-            updateBulkBar();
-        }
-
-        function updateBulkBar() {
-            const bar = document.getElementById('bulk-actions-bar');
-            const countSpan = document.getElementById('selected-count');
-            countSpan.textContent = selectedDespesasIds.size;
-            if (selectedDespesasIds.size > 0) {
-                bar.classList.remove('hidden');
-            } else {
-                bar.classList.add('hidden');
-            }
-        }
-
-        function deleteSelectedDespesas() {
-            if (selectedDespesasIds.size === 0) return;
-            if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens selecionados?`)) {
-                despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
-                selectedDespesasIds.clear();
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function deleteAllDespesas() {
-            if (confirm('ATENÇÃO: Deseja realmente excluir TODAS as despesas cadastradas no sistema? Esta ação não pode ser desfeita.')) {
-                despesas = [];
-                selectedDespesasIds.clear();
-                saveAndSyncData();
-                updateAll();
-            }
-        }
-
-        function updateValorPagoDirectly(id, inputElement) {
-            const valPago = parseFloat(inputElement.value) || 0;
-            const idx = despesas.findIndex(d => d.id == id);
-            if (idx !== -1) {
-                despesas[idx].valorPago = valPago;
-                despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
-
-                saveAndSyncData();
-                updateAll();
-            }
         }
 
         function renderTables() {
@@ -1075,15 +863,8 @@
             const tbodyDespesas = document.getElementById('table-despesas-body');
             tbodyDespesas.innerHTML = '';
 
-            // REGRA: Na aba contas a pagar, ficam APENAS as despesas que não tem valor lançado na coluna G (Valor Pago)
             let contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
-
-            // REGRA: Classificado por data de vencimento (crescente)
-            contasPagar.sort((a, b) => {
-                const dtA = a.dataVencimento || '9999-12-31';
-                const dtB = b.dataVencimento || '9999-12-31';
-                return dtA.localeCompare(dtB);
-            });
+            contasPagar.sort((a, b) => (a.dataVencimento || '9999-12-31').localeCompare(b.dataVencimento || '9999-12-31'));
 
             const filteredDesp = contasPagar.filter(d => 
                 (d.descricao || '').toLowerCase().includes(search) || 
@@ -1095,49 +876,30 @@
                 tbodyDespesas.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-zinc-500">Nenhuma conta a pagar pendente.</td></tr>`;
             } else {
                 filteredDesp.forEach(d => {
-                    const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
-                    const catColor = getCategoryColor(d.tipoDespesa);
-
                     tbodyDespesas.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 text-center">
-                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
-                            </td>
+                            <td class="p-3 text-center"><input type="checkbox" onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600"></td>
                             <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
                             <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
-                            <td class="p-3 font-medium text-white flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
-                                ${d.tipoDespesa || 'Geral'}
-                            </td>
+                            <td class="p-3 font-medium text-white">${d.tipoDespesa || 'Geral'}</td>
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
                             <td class="p-3">${d.mes || '-'}</td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
-                            
                             <td class="p-3 text-right">
-                                <input type="number" step="0.01" value="${d.valorPago || ''}" 
-                                       onchange="updateValorPagoDirectly(${d.id}, this)" 
-                                       placeholder="0.00" 
-                                       class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <input type="number" step="0.01" value="${d.valorPago || ''}" onchange="updateValorPagoDirectly(${d.id}, this)" placeholder="0.00" class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white">
                             </td>
-
                             <td class="p-3 font-semibold text-amber-300">${formatDateBR(d.dataVencimento)}</td>
-                            <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                    Pendente
-                                </span>
-                            </td>
+                            <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400">Pendente</span></td>
                             <td class="p-3 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                    <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             </td>
                         </tr>
                     `;
                 });
             }
-
-            updateBulkBar();
 
             const tbodyEntradas = document.getElementById('table-entradas-body');
             tbodyEntradas.innerHTML = '';
@@ -1148,10 +910,7 @@
                         <td class="p-3 font-medium text-white">${e.descricao}</td>
                         <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(e.valor)}</td>
                         <td class="p-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="startEditEntrada(${e.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                <button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
+                            <button onclick="deleteEntrada(${e.id})" class="text-zinc-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1159,55 +918,23 @@
             lucide.createIcons();
         }
 
-        function openEditDespesaModal(id) {
-            const d = despesas.find(item => item.id == id);
-            if (!d) return;
-
-            document.getElementById('edit-despesa-id').value = d.id;
-            document.getElementById('edit-despesa-codigo').value = d.codigo || 1;
-            document.getElementById('edit-despesa-lanc').value = d.dataLancamento || '';
-            document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
-            document.getElementById('edit-despesa-desc').value = d.descricao || '';
-            document.getElementById('edit-despesa-valor').value = d.valor || 0;
-            document.getElementById('edit-despesa-valorpago').value = d.valorPago || 0;
-            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
-
-            document.getElementById('modal-edit-despesa').classList.remove('hidden');
-        }
-
-        function closeEditDespesaModal() {
-            document.getElementById('modal-edit-despesa').classList.add('hidden');
-        }
-
-        function deleteDespesa(id) {
-            if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
-                despesas = despesas.filter(d => d.id != id);
-                selectedDespesasIds.delete(id);
+        function updateValorPagoDirectly(id, inputElement) {
+            const valPago = parseFloat(inputElement.value) || 0;
+            const idx = despesas.findIndex(d => d.id == id);
+            if (idx !== -1) {
+                despesas[idx].valorPago = valPago;
+                despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
                 saveAndSyncData();
                 updateAll();
             }
         }
 
-        function startEditEntrada(id) {
-            const e = entradas.find(item => item.id == id);
-            if (!e) return;
-
-            document.getElementById('entrada-edit-id').value = e.id;
-            document.getElementById('entrada-valor').value = e.valor;
-            document.getElementById('entrada-descricao').value = e.descricao;
-            document.getElementById('entrada-data').value = e.data;
-
-            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Entrada';
-            document.getElementById('btn-cancelar-entrada').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function cancelEditEntrada() {
-            document.getElementById('form-entrada').reset();
-            document.getElementById('entrada-edit-id').value = '';
-            document.getElementById('form-entrada-title').innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Lançar Entrada';
-            document.getElementById('btn-cancelar-entrada').classList.add('hidden');
-            lucide.createIcons();
+        function deleteDespesa(id) {
+            if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
+                despesas = despesas.filter(d => d.id != id);
+                saveAndSyncData();
+                updateAll();
+            }
         }
 
         function deleteEntrada(id) {
@@ -1218,301 +945,31 @@
             }
         }
 
-        function renderCharts(fEntradas, fDespesas) {
-            if (charts.tipo) charts.tipo.destroy();
-            if (charts.despTipo) charts.despTipo.destroy();
-            if (charts.despDesc) charts.despDesc.destroy();
-            if (charts.fluxo) charts.fluxo.destroy();
+        function openEditDespesaModal(id) {
+            const d = despesas.find(item => item.id == id);
+            if (!d) return;
+            document.getElementById('edit-despesa-id').value = d.id;
+            document.getElementById('edit-despesa-codigo').value = d.codigo || 1;
+            document.getElementById('edit-despesa-lanc').value = d.dataLancamento || '';
+            document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
+            document.getElementById('edit-despesa-desc').value = d.descricao || '';
+            document.getElementById('edit-despesa-valor').value = d.valor || 0;
+            document.getElementById('edit-despesa-valorpago').value = d.valorPago || 0;
+            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
+            document.getElementById('modal-edit-despesa').classList.remove('hidden');
+        }
 
-            const handleChartClick = (evt, elements, chartInstance) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const label = chartInstance.data.labels[index];
-                    activeCategoryFilter = label;
-                    updateAll();
-                }
-            };
-
-            const tipoMap = {};
-            fDespesas.forEach(d => {
-                const tipo = d.tipoDespesa || 'Outros';
-                tipoMap[tipo] = (tipoMap[tipo] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const tipoLabels = Object.keys(tipoMap);
-            const tipoColors = getColorsForCategories(tipoLabels);
-
-            charts.tipo = new Chart(document.getElementById('chart-tipo-despesa').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: tipoLabels.length ? tipoLabels : ['Sem dados'],
-                    datasets: [{ 
-                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1], 
-                        backgroundColor: tipoLabels.length ? tipoColors : ['#3f3f46'] 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } } }
-            });
-
-            charts.despTipo = new Chart(document.getElementById('chart-despesas-tipo').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: tipoLabels,
-                    datasets: [{ 
-                        label: 'Valor por Tipo', 
-                        data: Object.values(tipoMap), 
-                        backgroundColor: tipoColors, 
-                        borderRadius: 4 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, onClick: handleChartClick, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
-
-            const descMap = {};
-            fDespesas.forEach(d => {
-                const desc = d.descricao || 'Outros';
-                descMap[desc] = (descMap[desc] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const descLabels = Object.keys(descMap);
-            const descColors = getColorsForCategories(descLabels);
-
-            charts.despDesc = new Chart(document.getElementById('chart-despesas-desc').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: descLabels,
-                    datasets: [{ 
-                        label: 'Valor por Descrição', 
-                        data: Object.values(descMap), 
-                        backgroundColor: descColors, 
-                        borderRadius: 4 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
-
-            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const entMensal = new Array(12).fill(0);
-            const saiMensal = new Array(12).fill(0);
-            fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
-            fDespesas.forEach(d => {
-                const dt = d.dataVencimento || d.dataLancamento;
-                let m = -1;
-                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                    m = monthMap[String(d.mes).toLowerCase().trim()];
-                } else if (dt) {
-                    m = new Date(dt + 'T00:00:00').getMonth();
-                }
-                if (m >= 0 && m < 12) saiMensal[m] += d.valor;
-            });
-
-            charts.fluxo = new Chart(document.getElementById('chart-fluxo-mensal').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'Entradas', data: entMensal, backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'Saídas', data: saiMensal, backgroundColor: '#7c3aed', borderRadius: 4 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } } }
-            });
+        function closeEditDespesaModal() {
+            document.getElementById('modal-edit-despesa').classList.add('hidden');
         }
 
         function updateDiretoria() {
-            const selectedMonth = document.getElementById('dir-month-select').value;
-
-            let dDespesas = [...despesas];
-            let dEntradas = [...entradas];
-
-            let monthsLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            let entComp = new Array(12).fill(0);
-            let saiComp = new Array(12).fill(0);
-
-            entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
-            despesas.forEach(d => {
-                const dt = d.dataVencimento || d.dataLancamento;
-                let m = -1;
-                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                    m = monthMap[String(d.mes).toLowerCase().trim()];
-                } else if (dt) {
-                    m = new Date(dt + 'T00:00:00').getMonth();
-                }
-                if (m >= 0 && m < 12) saiComp[m] += d.valor;
-            });
-
-            if (selectedMonth !== 'all') {
-                const m = parseInt(selectedMonth);
-                monthsLabels = [monthsLabels[m]];
-                entComp = [entComp[m]];
-                saiComp = [saiComp[m]];
-
-                dDespesas = dDespesas.filter(d => {
-                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                        return monthMap[String(d.mes).toLowerCase().trim()] === m;
-                    }
-                    const dt = d.dataVencimento || d.dataLancamento;
-                    if (dt) {
-                        const parsed = new Date(dt + 'T00:00:00');
-                        return !isNaN(parsed) && parsed.getMonth() === m;
-                    }
-                    return false;
-                });
-
-                dEntradas = dEntradas.filter(e => {
-                    if (!e.data) return false;
-                    const parsed = new Date(e.data + 'T00:00:00');
-                    return !isNaN(parsed) && parsed.getMonth() === m;
-                });
-            }
-
-            const totalEntradas = dEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
-            const totalSaidas = dDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+            const totalEntradas = entradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
+            const totalSaidas = despesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
             const resultado = totalEntradas - totalSaidas;
-            const margem = totalEntradas > 0 ? ((resultado / totalEntradas) * 100).toFixed(1) : '0.0';
-
-            const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + d.valor, 0);
-            const pendentes = totalSaidas - pagas;
-
             document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
             document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
             document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
-            document.getElementById('dir-kpi-resultado').className = `text-2xl font-black mt-1 ${resultado >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-            document.getElementById('dir-kpi-margem').textContent = `Margem Operacional: ${margem}%`;
-            document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
-
-            if (charts.dirCompMensal) charts.dirCompMensal.destroy();
-            charts.dirCompMensal = new Chart(document.getElementById('dir-chart-comparativo-mensal').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: monthsLabels,
-                    datasets: [
-                        { label: 'Entradas (Faturamento)', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
-                        { label: 'Saídas (Custos)', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
-                }
-            });
-
-            if (charts.dirBalanco) charts.dirBalanco.destroy();
-            charts.dirBalanco = new Chart(document.getElementById('dir-chart-balanco').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Entradas (Créditos)', 'Saídas (Custos)'],
-                    datasets: [{
-                        data: [totalEntradas, totalSaidas],
-                        backgroundColor: ['#10b981', '#ef4444'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
-                }
-            });
-
-            const tipoMap = {};
-            dDespesas.forEach(d => {
-                const t = d.tipoDespesa || 'Geral';
-                tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
-            });
-
-            const dirTipoKeys = Object.keys(tipoMap);
-            const dirTipoColors = getColorsForCategories(dirTipoKeys);
-
-            if (charts.dirTipoMês) charts.dirTipoMês.destroy();
-            charts.dirTipoMês = new Chart(document.getElementById('dir-chart-tipo').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
-                    datasets: [{
-                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1],
-                        backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } }
-                }
-            });
-
-            const tbodyTipos = document.getElementById('dir-table-tipos-body');
-            tbodyTipos.innerHTML = '';
-
-            if (dirTipoKeys.length === 0) {
-                tbodyTipos.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-zinc-500">Nenhuma despesa registrada para o mês selecionado.</td></tr>`;
-            } else {
-                dirTipoKeys.forEach(tipo => {
-                    const val = tipoMap[tipo];
-                    const part = totalSaidas > 0 ? ((val / totalSaidas) * 100).toFixed(1) : '0.0';
-                    const catColor = getCategoryColor(tipo);
-                    tbodyTipos.innerHTML += `
-                        <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 font-medium text-white flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${catColor}"></span>
-                                ${tipo}
-                            </td>
-                            <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(val)}</td>
-                            <td class="p-3 text-right font-semibold text-zinc-300">${part}%</td>
-                            <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${val > (totalSaidas * 0.3) ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-brand-500/10 text-brand-400 border border-brand-500/20'}">
-                                    ${val > (totalSaidas * 0.3) ? 'Alto Impacto' : 'Normal'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            const sortedDespesas = [...dDespesas].sort((a, b) => b.valor - a.valor).slice(0, 5);
-            const containerTop = document.getElementById('dir-top-gastos-list');
-            containerTop.innerHTML = '';
-
-            if (sortedDespesas.length === 0) {
-                containerTop.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">Sem registros no período</div>`;
-            } else {
-                sortedDespesas.forEach((item, idx) => {
-                    containerTop.innerHTML += `
-                        <div class="flex items-center justify-between p-3 bg-dark-bg border border-dark-border rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full bg-brand-600/20 text-brand-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
-                                <div>
-                                    <div class="text-xs font-bold text-white">${item.descricao || 'Sem descrição'}</div>
-                                    <div class="text-[10px] text-zinc-400">${item.tipoDespesa || 'Geral'}</div>
-                                </div>
-                            </div>
-                            <div class="text-xs font-black text-rose-400">${formatCurrency(item.valor)}</div>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function formatDateVal(val) {
-            if (!val) return '';
-            if (val instanceof Date) {
-                const y = val.getFullYear();
-                const m = String(val.getMonth() + 1).padStart(2, '0');
-                const d = String(val.getDate()).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            }
-            const s = String(val).trim();
-            if (s.includes('/')) {
-                const parts = s.split('/');
-                if (parts.length === 3) {
-                    if (parts[0].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`;
-                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
-                }
-            }
-            return s.substring(0, 10);
         }
 
         function formatDateBR(val) {
@@ -1520,111 +977,9 @@
             const s = String(val).trim();
             if (s.includes('-')) {
                 const parts = s.split('T')[0].split('-');
-                if (parts.length === 3) {
-                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-                }
+                if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
             }
             return s;
-        }
-
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                if (json.length < 2) return;
-
-                let atualizados = 0;
-                let novos = 0;
-
-                for (let i = 1; i < json.length; i++) {
-                    const row = json[i];
-                    if (!row || row.length === 0) continue;
-
-                    // Colunas A a H:
-                    // A: Codigo, B: Lançamento, C: Tipo Despesa, D: Descrição, E: Mês, F: Valor Total, G: Valor Pago, H: Vencimento
-                    const codigo = parseInt(row[0]) || i;
-                    const valTotal = parseFloat(row[5]) || 0;
-                    const valPago = parseFloat(row[6]) || 0;
-                    if (valTotal === 0 && !row[3]) continue;
-
-                    let monthName = String(row[4] || '').trim();
-                    const venc = formatDateVal(row[7]);
-                    if (!monthName && venc) {
-                        const dt = new Date(venc + 'T00:00:00');
-                        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                        monthName = months[dt.getMonth()];
-                    }
-
-                    const itemImportado = {
-                        codigo: codigo,
-                        dataLancamento: formatDateVal(row[1]),
-                        tipoDespesa: row[2] || 'Geral',
-                        descricao: row[3] || 'Sem Descrição',
-                        mes: monthName,
-                        valor: valTotal,
-                        valorPago: valPago,
-                        dataVencimento: venc,
-                        status: valPago > 0 ? 'Pago' : 'Pendente'
-                    };
-
-                    // REGRA: Se houver o mesmo código na Coluna A, o sistema não duplica, apenas atualiza o valor pago (Coluna G)
-                    const indexExistente = despesas.findIndex(d => Number(d.codigo) === Number(itemImportado.codigo));
-
-                    if (indexExistente !== -1) {
-                        despesas[indexExistente].valorPago = itemImportado.valorPago;
-                        despesas[indexExistente].status = itemImportado.valorPago > 0 ? 'Pago' : 'Pendente';
-                        despesas[indexExistente].valor = itemImportado.valor || despesas[indexExistente].valor;
-                        despesas[indexExistente].dataVencimento = itemImportado.dataVencimento || despesas[indexExistente].dataVencimento;
-                        despesas[indexExistente].dataLancamento = itemImportado.dataLancamento || despesas[indexExistente].dataLancamento;
-                        despesas[indexExistente].tipoDespesa = itemImportado.tipoDespesa || despesas[indexExistente].tipoDespesa;
-                        despesas[indexExistente].descricao = itemImportado.descricao || despesas[indexExistente].descricao;
-                        atualizados++;
-                    } else {
-                        despesas.push({ id: Date.now() + i, ...itemImportado });
-                        novos++;
-                    }
-                }
-
-                saveAndSyncData();
-                alert(`Planilha importada!
-• ${novos} novos itens.
-• ${atualizados} itens atualizados pelo código.`);
-                updateAll();
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function exportData() {
-            // SEQUÊNCIA EXATA DA IMAGEM: Codigo | Lançamento | Tipo Despesa | Descrição | Mês | Valor Total | Valor Pago | Vencimento
-            const dataToExport = despesas.length ? despesas.map(d => ({
-                'Codigo': d.codigo || 1,
-                'Lançamento': d.dataLancamento ? formatDateBR(d.dataLancamento) : '',
-                'Tipo Despesa': d.tipoDespesa || '',
-                'Descrição': d.descricao || '',
-                'Mês': d.mes || '',
-                'Valor Total': d.valor || 0,
-                'Valor Pago': d.valorPago || 0,
-                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : ''
-            })) : [{
-                'Codigo': 1,
-                'Lançamento': '05/01/2026',
-                'Tipo Despesa': 'Operacional',
-                'Descrição': 'Exemplo de Despesa',
-                'Mês': 'Janeiro',
-                'Valor Total': 1500.00,
-                'Valor Pago': 0,
-                'Vencimento': '15/01/2026'
-            }];
-            const ws = XLSX.utils.json_to_sheet(dataToExport);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
-            XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
         }
 
         function renderUsers() {
@@ -1646,6 +1001,23 @@
             users.splice(idx, 1);
             localStorage.setItem('stanize_users', JSON.stringify(users));
             renderUsers();
+        }
+
+        function exportData() {
+            const dataToExport = despesas.length ? despesas.map(d => ({
+                'Codigo': d.codigo || 1,
+                'Lançamento': d.dataLancamento ? formatDateBR(d.dataLancamento) : '',
+                'Tipo Despesa': d.tipoDespesa || '',
+                'Descrição': d.descricao || '',
+                'Mês': d.mes || '',
+                'Valor Total': d.valor || 0,
+                'Valor Pago': d.valorPago || 0,
+                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : ''
+            })) : [];
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
+            XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
         }
     </script>
 </body>
