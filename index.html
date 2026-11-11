@@ -220,40 +220,46 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-bold text-white">Lançar Nova Despesa</h2>
-                            <p class="text-xs text-zinc-400">Cadastre a conta a pagar. O status mudará para PAGO automaticamente ao inserir o valor correto pago.</p>
+                            <p class="text-xs text-zinc-400">Cadastre a conta a pagar seguindo o padrão de colunas.</p>
                         </div>
                     </div>
 
                     <form id="form-nova-despesa" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tipo de Despesa / Categoria *</label>
-                                <input type="text" id="novo-despesa-tipo" required placeholder="Ex: Pro-Labore, Aluguel, Fornecedor..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Código (Número) *</label>
+                                <input type="number" id="novo-despesa-codigo" required placeholder="Ex: 1, 2, 3..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Descrição / Fornecedor *</label>
-                                <input type="text" id="novo-despesa-desc" required placeholder="Ex: Pagamento referente ao serviço..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Lançamento *</label>
+                                <input type="date" id="novo-despesa-lanc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tipo de Despesa *</label>
+                                <input type="text" id="novo-despesa-tipo" required placeholder="Ex: Operacional, Aluguel..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Descrição *</label>
+                                <input type="text" id="novo-despesa-desc" required placeholder="Ex: Fornecedor..." class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Lançado (R$) *</label>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Total (R$) *</label>
                                 <input type="number" step="0.01" id="novo-despesa-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data de Vencimento *</label>
-                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Pago (R$) <span class="text-zinc-500">(Zerado = Conta a Pagar)</span></label>
+                                <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data de Pagamento (Opcional)</label>
-                                <input type="date" id="novo-despesa-pag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Vencimento *</label>
+                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Já Pago (R$) <span class="text-zinc-500 font-normal">(Se igual ao valor lançado, marcará PAGO automaticamente)</span></label>
-                            <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                         </div>
 
                         <div class="pt-2">
@@ -265,7 +271,7 @@
                 </div>
             </section>
 
-            <!-- TAB 2: CONTAS A PAGAR (COM COLUNA DE VALOR PAGO E FILTRO TEMPORAL RAPIDO) -->
+            <!-- TAB 2: CONTAS A PAGAR (APENAS CONTAS COM VALOR PAGO ZERADO, CLASSIFICADO POR VENCIMENTO) -->
             <section id="tab-despesas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl">
@@ -281,11 +287,11 @@
                 <div class="bg-dark-card border border-dark-border rounded-2xl p-6 space-y-4">
                     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div>
-                            <h2 class="text-lg font-bold text-white">Detalhamento e Gestão de Contas a Pagar</h2>
-                            <p class="text-xs text-zinc-400">Ao preencher a coluna "Valor Pago" igual ao "Valor Lançado", a conta é baixada automaticamente.</p>
+                            <h2 class="text-lg font-bold text-white">Contas a Pagar (Classificado por Data de Vencimento)</h2>
+                            <p class="text-xs text-zinc-400">Apenas despesas sem Valor Pago lançado (Coluna G zerada/vazia). Preencha o valor pago para dar baixa.</p>
                         </div>
 
-                        <!-- SELETOR RÁPIDO DE PERÍODO (DIAS, SEMANA, MÊS, ANO) -->
+                        <!-- SELETOR RÁPIDO DE PERÍODO -->
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <div class="flex items-center gap-1 bg-dark-bg border border-dark-border p-1 rounded-xl">
                                 <button onclick="setQuickPeriodFilter('all')" id="btn-period-all" class="btn-period px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-dark-card">Todas</button>
@@ -324,12 +330,14 @@
                                     <th class="p-3 w-10 text-center">
                                         <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                                     </th>
-                                    <th class="p-3">Vencimento</th>
-                                    <th class="p-3">Pagamento</th>
-                                    <th class="p-3">Tipo de Despesa</th>
+                                    <th class="p-3">Código</th>
+                                    <th class="p-3">Lançamento</th>
+                                    <th class="p-3">Tipo Despesa</th>
                                     <th class="p-3">Descrição</th>
-                                    <th class="p-3 text-right">Valor Lançado</th>
+                                    <th class="p-3">Mês</th>
+                                    <th class="p-3 text-right">Valor Total</th>
                                     <th class="p-3 text-right">Valor Pago (R$)</th>
+                                    <th class="p-3">Vencimento</th>
                                     <th class="p-3 text-center">Status</th>
                                     <th class="p-3 text-center">Ações</th>
                                 </tr>
@@ -569,30 +577,36 @@
                 <input type="hidden" id="edit-despesa-id">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
-                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Código (Número)</label>
+                        <input type="number" id="edit-despesa-codigo" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Pagamento</label>
-                        <input type="date" id="edit-despesa-pag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                        <label class="block text-xs text-zinc-400 mb-1">Lançamento</label>
+                        <input type="date" id="edit-despesa-lanc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-zinc-400 mb-1">Tipo de Despesa</label>
-                    <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-                </div>
-                <div>
-                    <label class="block text-xs text-zinc-400 mb-1">Descrição</label>
-                    <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Lançado (R$)</label>
+                        <label class="block text-xs text-zinc-400 mb-1">Tipo de Despesa</label>
+                        <input type="text" id="edit-despesa-tipo" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Descrição</label>
+                        <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Total (R$)</label>
                         <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$)</label>
                         <input type="number" step="0.01" id="edit-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
+                        <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
@@ -621,7 +635,6 @@
 
         let charts = {};
 
-        // CORES ÚNICAS E EXCLUSIVAS PARA CATEGORIAS
         const COLOR_PALETTE = [
             '#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
             '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#f97316', 
@@ -674,19 +687,16 @@
                 }
             });
 
-            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA
+            // NOVO FORMULÁRIO DE LANÇAMENTO DE DESPESA (Ordem Colunas A-H)
             document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
+                const codigo = parseInt(document.getElementById('novo-despesa-codigo').value) || 1;
+                const lanc = document.getElementById('novo-despesa-lanc').value;
                 const tipo = document.getElementById('novo-despesa-tipo').value.trim();
                 const desc = document.getElementById('novo-despesa-desc').value.trim();
-                const valorLancado = parseFloat(document.getElementById('novo-despesa-valor').value) || 0;
-                const venc = document.getElementById('novo-despesa-venc').value;
-                const pag = document.getElementById('novo-despesa-pag').value;
+                const valorTotal = parseFloat(document.getElementById('novo-despesa-valor').value) || 0;
                 const valorPagoInput = parseFloat(document.getElementById('novo-despesa-valorpago').value) || 0;
-
-                // REGRA DE AUTOMACAO: Se o valor pago for exatamente igual ou superior ao valor lançado, o status é PAGO
-                const isPago = valorPagoInput > 0 && valorPagoInput >= valorLancado;
-                const statusCalculado = isPago ? 'Pago' : 'Pendente';
+                const venc = document.getElementById('novo-despesa-venc').value;
 
                 let monthName = '';
                 if (venc) {
@@ -697,14 +707,15 @@
 
                 const novaDespesa = {
                     id: Date.now(),
-                    dataVencimento: venc,
-                    dataPagamento: pag || (isPago ? venc : ''),
-                    mes: monthName,
+                    codigo: codigo,
+                    dataLancamento: lanc || new Date().toISOString().split('T')[0],
                     tipoDespesa: tipo,
                     descricao: desc,
-                    valor: valorLancado,
+                    mes: monthName,
+                    valor: valorTotal,
                     valorPago: valorPagoInput,
-                    status: statusCalculado
+                    dataVencimento: venc,
+                    status: valorPagoInput > 0 ? 'Pago' : 'Pendente'
                 };
 
                 despesas.push(novaDespesa);
@@ -742,17 +753,17 @@
                 const id = document.getElementById('edit-despesa-id').value;
                 const idx = despesas.findIndex(d => d.id == id);
                 if (idx !== -1) {
-                    const valLancado = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
+                    const valTotal = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
                     const valPago = parseFloat(document.getElementById('edit-despesa-valorpago').value) || 0;
-                    const isPago = valPago > 0 && valPago >= valLancado;
 
-                    despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
-                    despesas[idx].dataPagamento = document.getElementById('edit-despesa-pag').value;
+                    despesas[idx].codigo = parseInt(document.getElementById('edit-despesa-codigo').value) || 1;
+                    despesas[idx].dataLancamento = document.getElementById('edit-despesa-lanc').value;
                     despesas[idx].tipoDespesa = document.getElementById('edit-despesa-tipo').value.trim();
                     despesas[idx].descricao = document.getElementById('edit-despesa-desc').value.trim();
-                    despesas[idx].valor = valLancado;
+                    despesas[idx].valor = valTotal;
                     despesas[idx].valorPago = valPago;
-                    despesas[idx].status = isPago ? 'Pago' : 'Pendente';
+                    despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
+                    despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
 
                     localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                     closeEditDespesaModal();
@@ -816,7 +827,6 @@
             }
         }
 
-        // LÓGICA DE FILTRAGEM RÁPIDA (HOJE, SEMANA, MÊS, ANO)
         function setQuickPeriodFilter(period) {
             quickPeriodFilter = period;
             document.querySelectorAll('.btn-period').forEach(b => {
@@ -838,28 +848,25 @@
             let fDespesas = [...despesas];
             let fEntradas = [...entradas];
 
-            // Filtro por Data Manual
             if (start) {
-                fDespesas = fDespesas.filter(d => (d.dataPagamento || d.dataVencimento) >= start);
+                fDespesas = fDespesas.filter(d => (d.dataVencimento || d.dataLancamento) >= start);
                 fEntradas = fEntradas.filter(e => e.data >= start);
             }
             if (end) {
-                fDespesas = fDespesas.filter(d => (d.dataPagamento || d.dataVencimento) <= end);
+                fDespesas = fDespesas.filter(d => (d.dataVencimento || d.dataLancamento) <= end);
                 fEntradas = fEntradas.filter(e => e.data <= end);
             }
 
-            // Filtro por Categoria Ativa
             if (activeCategoryFilter) {
                 fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
             }
 
-            // Filtro Rápido por Período
             if (quickPeriodFilter !== 'all') {
                 const now = new Date();
                 const todayStr = now.toISOString().split('T')[0];
 
                 if (quickPeriodFilter === 'day') {
-                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataPagamento === todayStr));
+                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataLancamento === todayStr));
                 } else if (quickPeriodFilter === 'week') {
                     const startOfWeek = new Date(now);
                     startOfWeek.setDate(now.getDate() - now.getDay());
@@ -869,14 +876,14 @@
                     const sStr = startOfWeek.toISOString().split('T')[0];
                     const eStr = endOfWeek.toISOString().split('T')[0];
                     fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataPagamento;
+                        const dt = d.dataVencimento || d.dataLancamento;
                         return dt >= sStr && dt <= eStr;
                     });
                 } else if (quickPeriodFilter === 'month') {
                     const currentMonth = now.getMonth();
                     const currentYear = now.getFullYear();
                     fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataPagamento;
+                        const dt = d.dataVencimento || d.dataLancamento;
                         if (!dt) return false;
                         const p = new Date(dt + 'T00:00:00');
                         return p.getMonth() === currentMonth && p.getFullYear() === currentYear;
@@ -884,7 +891,7 @@
                 } else if (quickPeriodFilter === 'year') {
                     const currentYear = now.getFullYear();
                     fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataPagamento;
+                        const dt = d.dataVencimento || d.dataLancamento;
                         if (!dt) return false;
                         return new Date(dt + 'T00:00:00').getFullYear() === currentYear;
                     });
@@ -900,7 +907,7 @@
             const totalSaidas = fDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
             const saldo = totalEntradas - totalSaidas;
 
-            const pagas = fDespesas.filter(d => (d.status || '').toLowerCase().includes('pago')).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+            const pagas = despesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
             const pendentes = totalSaidas - pagas;
 
             document.getElementById('kpi-entradas').textContent = formatCurrency(totalEntradas);
@@ -940,8 +947,10 @@
 
         function toggleSelectAll(masterCheckbox) {
             const { fDespesas } = getFilteredData();
+            // Apenas contas a pagar (Valor Pago zerado/vazio)
+            const contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
             if (masterCheckbox.checked) {
-                fDespesas.forEach(d => selectedDespesasIds.add(d.id));
+                contasPagar.forEach(d => selectedDespesasIds.add(d.id));
             } else {
                 selectedDespesasIds.clear();
             }
@@ -987,23 +996,12 @@
             }
         }
 
-        // ATUALIZAÇÃO DIRETA NA TABELA: RECONHECIMENTO DE PAGAMENTO AUTOMÁTICO
         function updateValorPagoDirectly(id, inputElement) {
             const valPago = parseFloat(inputElement.value) || 0;
             const idx = despesas.findIndex(d => d.id == id);
             if (idx !== -1) {
                 despesas[idx].valorPago = valPago;
-                const valLancado = parseFloat(despesas[idx].valor) || 0;
-                
-                // Regra de Ouro: Se valor pago >= valor lançado -> PAGO automaticamente
-                if (valPago > 0 && valPago >= valLancado) {
-                    despesas[idx].status = 'Pago';
-                    if (!despesas[idx].dataPagamento) {
-                        despesas[idx].dataPagamento = new Date().toISOString().split('T')[0];
-                    }
-                } else {
-                    despesas[idx].status = 'Pendente';
-                }
+                despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
 
                 localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
                 updateAll();
@@ -1016,16 +1014,27 @@
 
             const tbodyDespesas = document.getElementById('table-despesas-body');
             tbodyDespesas.innerHTML = '';
-            const filteredDesp = fDespesas.filter(d => 
+
+            // REGRA: Na aba contas a pagar, ficam APENAS as despesas que não tem valor lançado na coluna G (Valor Pago)
+            let contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
+
+            // REGRA: Classificado por data de vencimento (crescente)
+            contasPagar.sort((a, b) => {
+                const dtA = a.dataVencimento || '9999-12-31';
+                const dtB = b.dataVencimento || '9999-12-31';
+                return dtA.localeCompare(dtB);
+            });
+
+            const filteredDesp = contasPagar.filter(d => 
                 (d.descricao || '').toLowerCase().includes(search) || 
-                (d.tipoDespesa || '').toLowerCase().includes(search)
+                (d.tipoDespesa || '').toLowerCase().includes(search) ||
+                String(d.codigo || '').toLowerCase().includes(search)
             );
 
             if (filteredDesp.length === 0) {
-                tbodyDespesas.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-zinc-500">Nenhum registro encontrado.</td></tr>`;
+                tbodyDespesas.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-zinc-500">Nenhuma conta a pagar pendente.</td></tr>`;
             } else {
                 filteredDesp.forEach(d => {
-                    const isPago = (d.status || '').toLowerCase().includes('pago');
                     const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
                     const catColor = getCategoryColor(d.tipoDespesa);
 
@@ -1034,26 +1043,27 @@
                             <td class="p-3 text-center">
                                 <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                             </td>
-                            <td class="p-3">${d.dataVencimento || '-'}</td>
-                            <td class="p-3">${d.dataPagamento || '-'}</td>
+                            <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
+                            <td class="p-3">${d.dataLancamento || '-'}</td>
                             <td class="p-3 font-medium text-white flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
                                 ${d.tipoDespesa || 'Geral'}
                             </td>
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
+                            <td class="p-3">${d.mes || '-'}</td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
                             
-                            <!-- INPUT DE VALOR PAGO DIRETO NA TABELA PARA RECONHECIMENTO AUTOMÁTICO -->
                             <td class="p-3 text-right">
-                                <input type="number" step="0.01" value="${d.valorPago !== undefined ? d.valorPago : (isPago ? d.valor : '')}" 
+                                <input type="number" step="0.01" value="${d.valorPago || ''}" 
                                        onchange="updateValorPagoDirectly(${d.id}, this)" 
                                        placeholder="0.00" 
                                        class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
                             </td>
 
+                            <td class="p-3 font-semibold text-amber-300">${d.dataVencimento || '-'}</td>
                             <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPago ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
-                                    ${d.status || 'Pendente'}
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    Pendente
                                 </span>
                             </td>
                             <td class="p-3 text-center">
@@ -1094,12 +1104,13 @@
             if (!d) return;
 
             document.getElementById('edit-despesa-id').value = d.id;
-            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
-            document.getElementById('edit-despesa-pag').value = d.dataPagamento || '';
+            document.getElementById('edit-despesa-codigo').value = d.codigo || 1;
+            document.getElementById('edit-despesa-lanc').value = d.dataLancamento || '';
             document.getElementById('edit-despesa-tipo').value = d.tipoDespesa || '';
             document.getElementById('edit-despesa-desc').value = d.descricao || '';
             document.getElementById('edit-despesa-valor').value = d.valor || 0;
-            document.getElementById('edit-despesa-valorpago').value = d.valorPago !== undefined ? d.valorPago : (d.status === 'Pago' ? d.valor : 0);
+            document.getElementById('edit-despesa-valorpago').value = d.valorPago || 0;
+            document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
 
             document.getElementById('modal-edit-despesa').classList.remove('hidden');
         }
@@ -1225,7 +1236,7 @@
             const saiMensal = new Array(12).fill(0);
             fEntradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entMensal[m] += e.valor; } });
             fDespesas.forEach(d => {
-                const dt = d.dataPagamento || d.dataVencimento;
+                const dt = d.dataVencimento || d.dataLancamento;
                 let m = -1;
                 if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
                     m = monthMap[String(d.mes).toLowerCase().trim()];
@@ -1260,7 +1271,7 @@
 
             entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
             despesas.forEach(d => {
-                const dt = d.dataPagamento || d.dataVencimento;
+                const dt = d.dataVencimento || d.dataLancamento;
                 let m = -1;
                 if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
                     m = monthMap[String(d.mes).toLowerCase().trim()];
@@ -1280,7 +1291,7 @@
                     if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
                         return monthMap[String(d.mes).toLowerCase().trim()] === m;
                     }
-                    const dt = d.dataPagamento || d.dataVencimento;
+                    const dt = d.dataVencimento || d.dataLancamento;
                     if (dt) {
                         const parsed = new Date(dt + 'T00:00:00');
                         return !isNaN(parsed) && parsed.getMonth() === m;
@@ -1300,7 +1311,7 @@
             const resultado = totalEntradas - totalSaidas;
             const margem = totalEntradas > 0 ? ((resultado / totalEntradas) * 100).toFixed(1) : '0.0';
 
-            const pagas = dDespesas.filter(d => (d.status || '').toLowerCase().includes('pago')).reduce((acc, d) => acc + d.valor, 0);
+            const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + d.valor, 0);
             const pendentes = totalSaidas - pagas;
 
             document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
@@ -1455,59 +1466,89 @@
                 const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 if (json.length < 2) return;
-                const headers = json[0].map(h => String(h).toLowerCase().trim());
-                
-                const idxVenc = headers.findIndex(h => h.includes('vencimento') || h.includes('data') || h.includes('lançamento'));
-                const idxPag = headers.findIndex(h => h.includes('pagamento'));
-                const idxTipo = headers.findIndex(h => h.includes('tipo') || h.includes('categoria'));
-                const idxDesc = headers.findIndex(h => h.includes('descri') || h.includes('fornecedor') || h.includes('referencia'));
-                const idxVal = headers.findIndex(h => h.includes('valor') || h.includes('debito') || h.includes('saida'));
-                const idxValPago = headers.findIndex(h => h.includes('pago'));
-                const idxStatus = headers.findIndex(h => h.includes('status') || h.includes('situa'));
-                const idxMes = headers.findIndex(h => h.includes('mês') || h.includes('mes'));
 
-                const parsedDespesas = [];
+                let atualizados = 0;
+                let novos = 0;
+
                 for (let i = 1; i < json.length; i++) {
                     const row = json[i];
                     if (!row || row.length === 0) continue;
-                    const val = parseFloat(row[idxVal !== -1 ? idxVal : 9]) || parseFloat(row[5]) || 0;
-                    if (val === 0) continue;
 
-                    const valPago = parseFloat(row[idxValPago !== -1 ? idxValPago : -1]) || (String(row[idxStatus !== -1 ? idxStatus : 8]).toLowerCase().includes('pago') ? val : 0);
-                    const isPago = valPago > 0 && valPago >= val;
+                    // Colunas A a H:
+                    // A: Codigo, B: Lançamento, C: Tipo Despesa, D: Descrição, E: Mês, F: Valor Total, G: Valor Pago, H: Vencimento
+                    const codigo = parseInt(row[0]) || i;
+                    const valTotal = parseFloat(row[5]) || 0;
+                    const valPago = parseFloat(row[6]) || 0;
+                    if (valTotal === 0 && !row[3]) continue;
 
-                    parsedDespesas.push({
-                        id: Date.now() + i,
-                        dataVencimento: formatDateVal(row[idxVenc !== -1 ? idxVenc : 1]),
-                        dataPagamento: formatDateVal(row[idxPag !== -1 ? idxPag : 10]),
-                        mes: idxMes !== -1 ? String(row[idxMes] || '') : '',
-                        tipoDespesa: row[idxTipo !== -1 ? idxTipo : 2] || 'Geral',
-                        descricao: row[idxDesc !== -1 ? idxDesc : 3] || 'Sem Descrição',
-                        valor: val,
+                    let monthName = String(row[4] || '').trim();
+                    const venc = formatDateVal(row[7]);
+                    if (!monthName && venc) {
+                        const dt = new Date(venc + 'T00:00:00');
+                        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        monthName = months[dt.getMonth()];
+                    }
+
+                    const itemImportado = {
+                        codigo: codigo,
+                        dataLancamento: formatDateVal(row[1]),
+                        tipoDespesa: row[2] || 'Geral',
+                        descricao: row[3] || 'Sem Descrição',
+                        mes: monthName,
+                        valor: valTotal,
                         valorPago: valPago,
-                        status: isPago ? 'Pago' : 'Pendente'
-                    });
+                        dataVencimento: venc,
+                        status: valPago > 0 ? 'Pago' : 'Pendente'
+                    };
+
+                    // REGRA: Se houver o mesmo código na Coluna A, o sistema não duplica, apenas atualiza o valor pago (Coluna G)
+                    const indexExistente = despesas.findIndex(d => Number(d.codigo) === Number(itemImportado.codigo));
+
+                    if (indexExistente !== -1) {
+                        despesas[indexExistente].valorPago = itemImportado.valorPago;
+                        despesas[indexExistente].status = itemImportado.valorPago > 0 ? 'Pago' : 'Pendente';
+                        despesas[indexExistente].valor = itemImportado.valor || despesas[indexExistente].valor;
+                        despesas[indexExistente].dataVencimento = itemImportado.dataVencimento || despesas[indexExistente].dataVencimento;
+                        despesas[indexExistente].dataLancamento = itemImportado.dataLancamento || despesas[indexExistente].dataLancamento;
+                        despesas[indexExistente].tipoDespesa = itemImportado.tipoDespesa || despesas[indexExistente].tipoDespesa;
+                        despesas[indexExistente].descricao = itemImportado.descricao || despesas[indexExistente].descricao;
+                        atualizados++;
+                    } else {
+                        despesas.push({ id: Date.now() + i, ...itemImportado });
+                        novos++;
+                    }
                 }
-                despesas = parsedDespesas;
-                selectedDespesasIds.clear();
+
                 localStorage.setItem('stanize_despesas', JSON.stringify(despesas));
-                alert(`${despesas.length} registros importados com sucesso!`);
+                alert(`Planilha importada!
+• ${novos} novos itens.
+• ${atualizados} itens atualizados pelo código.`);
                 updateAll();
             };
             reader.readAsArrayBuffer(file);
         }
 
         function exportData() {
-            const dataToExport = despesas.map(d => ({
-                'Data Vencimento': d.dataVencimento,
-                'Data Pagamento': d.dataPagamento,
-                'Mês': d.mes,
-                'Tipo de Despesa': d.tipoDespesa,
-                'Descrição': d.descricao,
-                'Valor Lançado (R$)': d.valor,
-                'Valor Pago (R$)': d.valorPago !== undefined ? d.valorPago : (d.status === 'Pago' ? d.valor : 0),
-                'Status': d.status
-            }));
+            // SEQUÊNCIA EXATA DA IMAGEM: Codigo | Lançamento | Tipo Despesa | Descrição | Mês | Valor Total | Valor Pago | Vencimento
+            const dataToExport = despesas.length ? despesas.map(d => ({
+                'Codigo': d.codigo || 1,
+                'Lançamento': d.dataLancamento || '',
+                'Tipo Despesa': d.tipoDespesa || '',
+                'Descrição': d.descricao || '',
+                'Mês': d.mes || '',
+                'Valor Total': d.valor || 0,
+                'Valor Pago': d.valorPago || 0,
+                'Vencimento': d.dataVencimento || ''
+            })) : [{
+                'Codigo': 1,
+                'Lançamento': '2026-01-05',
+                'Tipo Despesa': 'Operacional',
+                'Descrição': 'Exemplo de Despesa',
+                'Mês': 'Janeiro',
+                'Valor Total': 1500.00,
+                'Valor Pago': 0,
+                'Vencimento': '2026-01-15'
+            }];
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
