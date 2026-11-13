@@ -98,23 +98,26 @@
                 </div>
 
                 <!-- MENU NAVEGAÇÃO -->
-                <nav class="hidden md:flex items-center gap-1 bg-dark-bg p-1 rounded-xl border border-dark-border">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-white bg-dark-card shadow">
+                <nav class="hidden lg:flex items-center gap-1 bg-dark-bg p-1 rounded-xl border border-dark-border">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-white bg-dark-card shadow">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral
                     </button>
-                    <button onclick="switchTab('lancardespesa')" id="nav-lancardespesa" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('lancardespesa')" id="nav-lancardespesa" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Lançar Despesa
                     </button>
-                    <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
-                        <i data-lucide="pie-chart" class="w-4 h-4"></i> Contas a Pagar
+                    <button onclick="switchTab('despesas')" id="nav-despesas" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white">
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i> Contas a Pagar
                     </button>
-                    <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('pagas')" id="nav-pagas" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Contas Pagas
+                    </button>
+                    <button onclick="switchTab('entradas')" id="nav-entradas" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white">
                         <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Entradas
                     </button>
-                    <button onclick="switchTab('diretoria')" id="nav-diretoria" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white">
+                    <button onclick="switchTab('diretoria')" id="nav-diretoria" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white">
                         <i data-lucide="presentation" class="w-4 h-4"></i> Diretoria & Dash
                     </button>
-                    <button onclick="switchTab('usuarios')" id="nav-usuarios" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-white hidden">
+                    <button onclick="switchTab('usuarios')" id="nav-usuarios" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-zinc-400 hover:text-white hidden">
                         <i data-lucide="users" class="w-4 h-4"></i> Usuários
                     </button>
                 </nav>
@@ -134,12 +137,13 @@
             </div>
 
             <!-- MENU MOBILE -->
-            <div class="md:hidden flex border-t border-dark-border overflow-x-auto p-2 gap-2 custom-scrollbar">
+            <div class="lg:hidden flex border-t border-dark-border overflow-x-auto p-2 gap-2 custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-dark-card text-white whitespace-nowrap">Visão Geral</button>
                 <button onclick="switchTab('lancardespesa')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Lançar Despesa</button>
                 <button onclick="switchTab('despesas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Contas a Pagar</button>
+                <button onclick="switchTab('pagas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Contas Pagas</button>
                 <button onclick="switchTab('entradas')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Entradas</button>
-                <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria</button>
+                <button onclick="switchTab('diretoria')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap">Diretoria & Dash</button>
                 <button onclick="switchTab('usuarios')" id="mob-nav-usuarios" class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 whitespace-nowrap hidden">Usuários</button>
             </div>
         </header>
@@ -194,7 +198,7 @@
                     <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
                         <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Status Contas</div>
                         <div class="flex items-center gap-4 mt-1">
-                            <div><span class="text-[10px] text-zinc-400">Pagas</span><span id="kpi-pagas" class="text-sm font-bold text-brand-500 block">R$ 0,00</span></div>
+                            <div><span class="text-[10px] text-zinc-400">Pagas</span><span id="kpi-pagas" class="text-sm font-bold text-emerald-400 block">R$ 0,00</span></div>
                             <div class="w-px h-6 bg-dark-border"></div>
                             <div><span class="text-[10px] text-zinc-400">Pendentes</span><span id="kpi-pendentes" class="text-sm font-bold text-amber-400 block">R$ 0,00</span></div>
                         </div>
@@ -226,7 +230,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-bold text-white">Lançar Nova Despesa</h2>
-                            <p class="text-xs text-zinc-400">Cadastre a conta a pagar seguindo o padrão de colunas.</p>
+                            <p class="text-xs text-zinc-400">Cadastre a conta seguindo o padrão de colunas. Se informar Valor Pago, vai direto para Contas Pagas.</p>
                         </div>
                     </div>
 
@@ -253,18 +257,25 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Total (R$) *</label>
                                 <input type="number" step="0.01" id="novo-despesa-valor" required placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                             <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Vencimento *</label>
+                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
                                 <label class="block text-xs font-semibold text-zinc-300 mb-1">Valor Pago (R$) <span class="text-zinc-500">(Zerado = Conta a Pagar)</span></label>
                                 <input type="number" step="0.01" id="novo-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Vencimento *</label>
-                                <input type="date" id="novo-despesa-venc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1">Data Pagamento <span class="text-zinc-500">(Opcional)</span></label>
+                                <input type="date" id="novo-despesa-datapag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
                             </div>
                         </div>
 
@@ -294,7 +305,7 @@
                     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-lg font-bold text-white">Contas a Pagar (Classificado por Data de Vencimento)</h2>
-                            <p class="text-xs text-zinc-400">Apenas despesas sem Valor Pago lançado (Coluna G zerada/vazia). Preencha o valor pago para dar baixa.</p>
+                            <p class="text-xs text-zinc-400">Apenas despesas pendentes. Preencha o Valor Pago para dar baixa automática para a aba Contas Pagas.</p>
                         </div>
 
                         <!-- SELETOR RÁPIDO DE PERÍODO -->
@@ -323,8 +334,8 @@
                             <button onclick="deleteSelectedDespesas()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir Selecionados
                             </button>
-                            <button onclick="deleteAllDespesas()" class="bg-zinc-800 hover:bg-zinc-700 text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-500/20">
-                                <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> Excluir TODOS
+                            <button onclick="deleteAllDespesas('pendentes')" class="bg-zinc-800 hover:bg-zinc-700 text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-500/20">
+                                <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> Excluir TODAS Pendentes
                             </button>
                         </div>
                     </div>
@@ -334,7 +345,7 @@
                             <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
                                 <tr>
                                     <th class="p-3 w-10 text-center">
-                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this, 'pendentes')" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                                     </th>
                                     <th class="p-3">Código</th>
                                     <th class="p-3">Lançamento</th>
@@ -354,7 +365,91 @@
                 </div>
             </section>
 
-            <!-- TAB 3: ENTRADAS MANUAIS -->
+            <!-- NOVA TAB 4: CONTAS PAGAS -->
+            <section id="tab-pagas" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Total Contas Liquidadas</div>
+                        <div id="pagas-kpi-total" class="text-2xl font-extrabold text-emerald-400">R$ 0,00</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Quantidade de Títulos Pagos</div>
+                        <div id="pagas-kpi-qtd" class="text-2xl font-extrabold text-white">0</div>
+                    </div>
+                    <div class="bg-dark-card border border-dark-border p-5 rounded-2xl">
+                        <div class="text-xs font-semibold text-zinc-400 uppercase mb-1">Diferença (Valor Total vs Pago)</div>
+                        <div id="pagas-kpi-diff" class="text-2xl font-extrabold text-brand-400">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-6 space-y-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> Contas Pagas (Histórico de Liquidação)
+                            </h2>
+                            <p class="text-xs text-zinc-400">Despesas já liquidadas. Usuários Master podem editar valores, data de vencimento e data de pagamento.</p>
+                        </div>
+
+                        <!-- SELETOR RÁPIDO DE PERÍODO -->
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <div class="flex items-center gap-1 bg-dark-bg border border-dark-border p-1 rounded-xl">
+                                <button onclick="setQuickPeriodFilterPagas('all')" id="btn-period-pagas-all" class="btn-period-pagas px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-dark-card">Todas</button>
+                                <button onclick="setQuickPeriodFilterPagas('day')" id="btn-period-pagas-day" class="btn-period-pagas px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Hoje</button>
+                                <button onclick="setQuickPeriodFilterPagas('week')" id="btn-period-pagas-week" class="btn-period-pagas px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Esta Semana</button>
+                                <button onclick="setQuickPeriodFilterPagas('month')" id="btn-period-pagas-month" class="btn-period-pagas px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Mês</button>
+                                <button onclick="setQuickPeriodFilterPagas('year')" id="btn-period-pagas-year" class="btn-period-pagas px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white">Este Ano</button>
+                            </div>
+                            <div class="relative w-full sm:w-48">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-zinc-500"></i>
+                                <input type="text" id="search-pagas" oninput="renderTables()" placeholder="Buscar pagas..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BARRA FLUTUANTE DE AÇÕES EM MASSA (CONTAS PAGAS) -->
+                    <div id="bulk-actions-bar-pagas" class="hidden bg-dark-bg border border-brand-500/40 p-3 rounded-xl flex items-center justify-between gap-3 transition">
+                        <div class="text-xs text-brand-400 font-bold flex items-center gap-2">
+                            <i data-lucide="check-square" class="w-4 h-4"></i>
+                            <span id="selected-count-pagas">0</span> itens selecionados
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="deleteSelectedPagas()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir Selecionados
+                            </button>
+                            <button onclick="deleteAllDespesas('pagas')" class="bg-zinc-800 hover:bg-zinc-700 text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-500/20">
+                                <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> Excluir TODAS Pagas
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-xs text-zinc-300">
+                            <thead class="bg-dark-bg text-zinc-400 uppercase font-semibold border-b border-dark-border">
+                                <tr>
+                                    <th class="p-3 w-10 text-center">
+                                        <input type="checkbox" id="select-all-pagas-checkbox" onchange="toggleSelectAll(this, 'pagas')" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                                    </th>
+                                    <th class="p-3">Código</th>
+                                    <th class="p-3">Lançamento</th>
+                                    <th class="p-3">Tipo Despesa</th>
+                                    <th class="p-3">Descrição</th>
+                                    <th class="p-3">Mês</th>
+                                    <th class="p-3 text-right">Valor Total</th>
+                                    <th class="p-3 text-right">Valor Pago (R$)</th>
+                                    <th class="p-3">Vencimento</th>
+                                    <th class="p-3">Data Pagamento</th>
+                                    <th class="p-3 text-center">Status</th>
+                                    <th class="p-3 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-pagas-body" class="divide-y divide-dark-border"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: ENTRADAS MANUAIS -->
             <section id="tab-entradas" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
@@ -405,7 +500,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: DIRETORIA & DASHBOARD EXECUTIVO COMPLETO -->
+            <!-- TAB 6: DIRETORIA & DASHBOARD EXECUTIVO COMPLETO -->
             <section id="tab-diretoria" class="tab-content hidden space-y-6">
                 <!-- TOP HEADER BAR COM SELETOR DE MÊS -->
                 <div class="bg-gradient-to-r from-zinc-900 via-dark-card to-brand-950/40 border border-brand-500/30 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
@@ -528,7 +623,7 @@
                 </div>
             </section>
 
-            <!-- TAB 5: GESTÃO DE USUÁRIOS -->
+            <!-- TAB 7: GESTÃO DE USUÁRIOS -->
             <section id="tab-usuarios" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-dark-card border border-dark-border p-6 rounded-2xl space-y-4">
@@ -570,12 +665,12 @@
         </footer>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE DESPESA -->
+    <!-- MODAL DE EDIÇÃO DE DESPESA (EXCLUSIVO MASTER) -->
     <div id="modal-edit-despesa" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 px-4">
         <div class="bg-dark-card border border-dark-border p-6 rounded-2xl shadow-2xl w-full max-w-lg space-y-4">
             <div class="flex items-center justify-between border-b border-dark-border pb-3">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Despesa
+                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-500"></i> Editar Lançamento (Master)
                 </h3>
                 <button onclick="closeEditDespesaModal()" class="text-zinc-400 hover:text-white">✕</button>
             </div>
@@ -601,18 +696,24 @@
                         <input type="text" id="edit-despesa-desc" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Valor Total (R$)</label>
                         <input type="number" step="0.01" id="edit-despesa-valor" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$)</label>
+                        <label class="block text-xs text-zinc-400 mb-1">Valor Pago (R$) <span class="text-[10px] text-zinc-500">(0 = Pendente)</span></label>
                         <input type="number" step="0.01" id="edit-despesa-valorpago" placeholder="0.00" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Vencimento</label>
+                        <label class="block text-xs text-zinc-400 mb-1">Data de Vencimento</label>
                         <input type="date" id="edit-despesa-venc" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Data de Pagamento</label>
+                        <input type="date" id="edit-despesa-datapag" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
@@ -637,7 +738,9 @@
         let entradas = JSON.parse(localStorage.getItem('stanize_entradas')) || [];
         let activeCategoryFilter = null;
         let selectedDespesasIds = new Set();
+        let selectedPagasIds = new Set();
         let quickPeriodFilter = 'all';
+        let quickPeriodFilterPagas = 'all';
 
         let charts = {};
 
@@ -698,6 +801,7 @@
                 }
             });
 
+            // LANÇAR NOVA DESPESA
             document.getElementById('form-nova-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const codigo = parseInt(document.getElementById('novo-despesa-codigo').value) || 1;
@@ -707,10 +811,18 @@
                 const valorTotal = parseFloat(document.getElementById('novo-despesa-valor').value) || 0;
                 const valorPagoInput = parseFloat(document.getElementById('novo-despesa-valorpago').value) || 0;
                 const venc = document.getElementById('novo-despesa-venc').value;
+                let dataPag = document.getElementById('novo-despesa-datapag').value;
+
+                if (valorPagoInput > 0 && !dataPag) {
+                    dataPag = new Date().toISOString().split('T')[0];
+                } else if (valorPagoInput === 0) {
+                    dataPag = '';
+                }
 
                 let monthName = '';
-                if (venc) {
-                    const dt = new Date(venc + 'T00:00:00');
+                const refDate = venc || lanc;
+                if (refDate) {
+                    const dt = new Date(refDate + 'T00:00:00');
                     const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
                     monthName = months[dt.getMonth()];
                 }
@@ -725,6 +837,7 @@
                     valor: valorTotal,
                     valorPago: valorPagoInput,
                     dataVencimento: venc,
+                    dataPagamento: dataPag,
                     status: valorPagoInput > 0 ? 'Pago' : 'Pendente'
                 };
 
@@ -732,8 +845,8 @@
                 saveAndSyncData();
                 document.getElementById('form-nova-despesa').reset();
 
-                alert('Despesa cadastrada com sucesso!');
-                switchTab('despesas');
+                alert(valorPagoInput > 0 ? 'Despesa paga cadastrada e enviada para Contas Pagas!' : 'Despesa cadastrada em Contas a Pagar!');
+                switchTab(valorPagoInput > 0 ? 'pagas' : 'despesas');
                 updateAll();
             });
 
@@ -758,21 +871,44 @@
                 updateAll();
             });
 
+            // SALVAR EDIÇÃO DO MODAL (EXCLUSIVO MASTER)
             document.getElementById('form-edit-despesa').addEventListener('submit', (e) => {
                 e.preventDefault();
+                if (!currentUser || currentUser.role !== 'MASTER') {
+                    alert('Apenas usuários com perfil MASTER podem editar lançamentos.');
+                    return;
+                }
+
                 const id = document.getElementById('edit-despesa-id').value;
                 const idx = despesas.findIndex(d => d.id == id);
                 if (idx !== -1) {
                     const valTotal = parseFloat(document.getElementById('edit-despesa-valor').value) || 0;
                     const valPago = parseFloat(document.getElementById('edit-despesa-valorpago').value) || 0;
+                    const venc = document.getElementById('edit-despesa-venc').value;
+                    let dataPag = document.getElementById('edit-despesa-datapag').value;
+
+                    if (valPago > 0 && !dataPag) {
+                        dataPag = new Date().toISOString().split('T')[0];
+                    } else if (valPago === 0) {
+                        dataPag = '';
+                    }
+
+                    let monthName = despesas[idx].mes;
+                    if (venc) {
+                        const dt = new Date(venc + 'T00:00:00');
+                        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        monthName = months[dt.getMonth()];
+                    }
 
                     despesas[idx].codigo = parseInt(document.getElementById('edit-despesa-codigo').value) || 1;
                     despesas[idx].dataLancamento = document.getElementById('edit-despesa-lanc').value;
                     despesas[idx].tipoDespesa = document.getElementById('edit-despesa-tipo').value.trim();
                     despesas[idx].descricao = document.getElementById('edit-despesa-desc').value.trim();
+                    despesas[idx].mes = monthName;
                     despesas[idx].valor = valTotal;
                     despesas[idx].valorPago = valPago;
-                    despesas[idx].dataVencimento = document.getElementById('edit-despesa-venc').value;
+                    despesas[idx].dataVencimento = venc;
+                    despesas[idx].dataPagamento = dataPag;
                     despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
 
                     saveAndSyncData();
@@ -881,6 +1017,9 @@
             if (currentUser.role === 'MASTER') {
                 document.getElementById('nav-usuarios').classList.remove('hidden');
                 document.getElementById('mob-nav-usuarios').classList.remove('hidden');
+            } else {
+                document.getElementById('nav-usuarios').classList.add('hidden');
+                document.getElementById('mob-nav-usuarios').classList.add('hidden');
             }
             renderUsers();
             updateAll();
@@ -908,6 +1047,8 @@
             }
             if (tabId === 'diretoria') {
                 setTimeout(updateDiretoria, 50);
+            } else {
+                updateAll();
             }
         }
 
@@ -923,6 +1064,52 @@
                 activeB.classList.remove('text-zinc-400');
             }
             updateAll();
+        }
+
+        function setQuickPeriodFilterPagas(period) {
+            quickPeriodFilterPagas = period;
+            document.querySelectorAll('.btn-period-pagas').forEach(b => {
+                b.classList.remove('bg-dark-card', 'text-white');
+                b.classList.add('text-zinc-400');
+            });
+            const activeB = document.getElementById(`btn-period-pagas-${period}`);
+            if (activeB) {
+                activeB.classList.add('bg-dark-card', 'text-white');
+                activeB.classList.remove('text-zinc-400');
+            }
+            updateAll();
+        }
+
+        function applyPeriodFilter(list, periodMode, dateFieldPreference = 'vencimento') {
+            if (periodMode === 'all') return list;
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+
+            return list.filter(d => {
+                const dt = dateFieldPreference === 'pagamento' 
+                    ? (d.dataPagamento || d.dataVencimento || d.dataLancamento) 
+                    : (d.dataVencimento || d.dataLancamento);
+                if (!dt) return false;
+
+                if (periodMode === 'day') {
+                    return dt === todayStr;
+                } else if (periodMode === 'week') {
+                    const startOfWeek = new Date(now);
+                    startOfWeek.setDate(now.getDate() - now.getDay());
+                    const endOfWeek = new Date(startOfWeek);
+                    endOfWeek.setDate(startOfWeek.getDate() + 6);
+                    const sStr = startOfWeek.toISOString().split('T')[0];
+                    const eStr = endOfWeek.toISOString().split('T')[0];
+                    return dt >= sStr && dt <= eStr;
+                } else if (periodMode === 'month') {
+                    const p = new Date(dt + 'T00:00:00');
+                    return p.getMonth() === now.getMonth() && p.getFullYear() === now.getFullYear();
+                } else if (periodMode === 'year') {
+                    const p = new Date(dt + 'T00:00:00');
+                    return p.getFullYear() === now.getFullYear();
+                }
+                return true;
+            });
         }
 
         function getFilteredData() {
@@ -945,43 +1132,6 @@
                 fDespesas = fDespesas.filter(d => (d.tipoDespesa || d.categoria) === activeCategoryFilter);
             }
 
-            if (quickPeriodFilter !== 'all') {
-                const now = new Date();
-                const todayStr = now.toISOString().split('T')[0];
-
-                if (quickPeriodFilter === 'day') {
-                    fDespesas = fDespesas.filter(d => (d.dataVencimento === todayStr || d.dataLancamento === todayStr));
-                } else if (quickPeriodFilter === 'week') {
-                    const startOfWeek = new Date(now);
-                    startOfWeek.setDate(now.getDate() - now.getDay());
-                    const endOfWeek = new Date(startOfWeek);
-                    endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-                    const sStr = startOfWeek.toISOString().split('T')[0];
-                    const eStr = endOfWeek.toISOString().split('T')[0];
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        return dt >= sStr && dt <= eStr;
-                    });
-                } else if (quickPeriodFilter === 'month') {
-                    const currentMonth = now.getMonth();
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        const p = new Date(dt + 'T00:00:00');
-                        return p.getMonth() === currentMonth && p.getFullYear() === currentYear;
-                    });
-                } else if (quickPeriodFilter === 'year') {
-                    const currentYear = now.getFullYear();
-                    fDespesas = fDespesas.filter(d => {
-                        const dt = d.dataVencimento || d.dataLancamento;
-                        if (!dt) return false;
-                        return new Date(dt + 'T00:00:00').getFullYear() === currentYear;
-                    });
-                }
-            }
-
             return { fDespesas, fEntradas };
         }
 
@@ -991,14 +1141,23 @@
             const totalSaidas = fDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
             const saldo = totalEntradas - totalSaidas;
 
-            const pagas = despesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
-            const pendentes = totalSaidas - pagas;
+            const pagasList = fDespesas.filter(d => d.valorPago && d.valorPago > 0);
+            const pendentesList = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
+
+            const pagasTotalPago = pagasList.reduce((acc, d) => acc + (parseFloat(d.valorPago) || 0), 0);
+            const pagasTotalOriginal = pagasList.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+            const pendentesTotal = pendentesList.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
 
             document.getElementById('kpi-entradas').textContent = formatCurrency(totalEntradas);
             document.getElementById('kpi-saidas').textContent = formatCurrency(totalSaidas);
             document.getElementById('kpi-saldo').textContent = formatCurrency(saldo);
-            document.getElementById('kpi-pagas').textContent = formatCurrency(pagas);
-            document.getElementById('kpi-pendentes').textContent = formatCurrency(pendentes);
+            document.getElementById('kpi-pagas').textContent = formatCurrency(pagasTotalPago);
+            document.getElementById('kpi-pendentes').textContent = formatCurrency(pendentesTotal);
+
+            // KPIs da aba Contas Pagas
+            document.getElementById('pagas-kpi-total').textContent = formatCurrency(pagasTotalPago);
+            document.getElementById('pagas-kpi-qtd').textContent = pagasList.length;
+            document.getElementById('pagas-kpi-diff').textContent = formatCurrency(pagasTotalPago - pagasTotalOriginal);
 
             if (activeCategoryFilter) {
                 document.getElementById('active-filter-badge').classList.remove('hidden');
@@ -1029,40 +1188,54 @@
             return (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        function toggleSelectAll(masterCheckbox) {
+        function toggleSelectAll(masterCheckbox, type) {
             const { fDespesas } = getFilteredData();
-            const contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
-            if (masterCheckbox.checked) {
-                contasPagar.forEach(d => selectedDespesasIds.add(d.id));
-            } else {
-                selectedDespesasIds.clear();
+            if (type === 'pendentes') {
+                const contasPagar = applyPeriodFilter(fDespesas.filter(d => !d.valorPago || d.valorPago === 0), quickPeriodFilter, 'vencimento');
+                if (masterCheckbox.checked) {
+                    contasPagar.forEach(d => selectedDespesasIds.add(d.id));
+                } else {
+                    selectedDespesasIds.clear();
+                }
+            } else if (type === 'pagas') {
+                const contasPagas = applyPeriodFilter(fDespesas.filter(d => d.valorPago && d.valorPago > 0), quickPeriodFilterPagas, 'pagamento');
+                if (masterCheckbox.checked) {
+                    contasPagas.forEach(d => selectedPagasIds.add(d.id));
+                } else {
+                    selectedPagasIds.clear();
+                }
             }
             renderTables();
         }
 
-        function toggleSelectDespesa(id, checkbox) {
-            if (checkbox.checked) {
-                selectedDespesasIds.add(id);
+        function toggleSelectDespesa(id, checkbox, type) {
+            if (type === 'pendentes') {
+                if (checkbox.checked) selectedDespesasIds.add(id);
+                else selectedDespesasIds.delete(id);
             } else {
-                selectedDespesasIds.delete(id);
+                if (checkbox.checked) selectedPagasIds.add(id);
+                else selectedPagasIds.delete(id);
             }
-            updateBulkBar();
+            updateBulkBars();
         }
 
-        function updateBulkBar() {
+        function updateBulkBars() {
             const bar = document.getElementById('bulk-actions-bar');
             const countSpan = document.getElementById('selected-count');
             countSpan.textContent = selectedDespesasIds.size;
-            if (selectedDespesasIds.size > 0) {
-                bar.classList.remove('hidden');
-            } else {
-                bar.classList.add('hidden');
-            }
+            if (selectedDespesasIds.size > 0) bar.classList.remove('hidden');
+            else bar.classList.add('hidden');
+
+            const barPagas = document.getElementById('bulk-actions-bar-pagas');
+            const countSpanPagas = document.getElementById('selected-count-pagas');
+            countSpanPagas.textContent = selectedPagasIds.size;
+            if (selectedPagasIds.size > 0) barPagas.classList.remove('hidden');
+            else barPagas.classList.add('hidden');
         }
 
         function deleteSelectedDespesas() {
             if (selectedDespesasIds.size === 0) return;
-            if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens selecionados?`)) {
+            if (confirm(`Deseja realmente excluir os ${selectedDespesasIds.size} itens pendentes selecionados?`)) {
                 despesas = despesas.filter(d => !selectedDespesasIds.has(d.id));
                 selectedDespesasIds.clear();
                 saveAndSyncData();
@@ -1070,12 +1243,31 @@
             }
         }
 
-        function deleteAllDespesas() {
-            if (confirm('ATENÇÃO: Deseja realmente excluir TODAS as despesas cadastradas no sistema? Esta ação não pode ser desfeita.')) {
-                despesas = [];
-                selectedDespesasIds.clear();
+        function deleteSelectedPagas() {
+            if (selectedPagasIds.size === 0) return;
+            if (confirm(`Deseja realmente excluir os ${selectedPagasIds.size} itens pagos selecionados?`)) {
+                despesas = despesas.filter(d => !selectedPagasIds.has(d.id));
+                selectedPagasIds.clear();
                 saveAndSyncData();
                 updateAll();
+            }
+        }
+
+        function deleteAllDespesas(scope) {
+            if (scope === 'pendentes') {
+                if (confirm('ATENÇÃO: Deseja excluir TODAS as contas pendentes (a pagar)?')) {
+                    despesas = despesas.filter(d => d.valorPago && d.valorPago > 0);
+                    selectedDespesasIds.clear();
+                    saveAndSyncData();
+                    updateAll();
+                }
+            } else if (scope === 'pagas') {
+                if (confirm('ATENÇÃO: Deseja excluir TODAS as contas já pagas?')) {
+                    despesas = despesas.filter(d => !d.valorPago || d.valorPago === 0);
+                    selectedPagasIds.clear();
+                    saveAndSyncData();
+                    updateAll();
+                }
             }
         }
 
@@ -1085,6 +1277,11 @@
             if (idx !== -1) {
                 despesas[idx].valorPago = valPago;
                 despesas[idx].status = valPago > 0 ? 'Pago' : 'Pendente';
+                if (valPago > 0 && !despesas[idx].dataPagamento) {
+                    despesas[idx].dataPagamento = new Date().toISOString().split('T')[0];
+                } else if (valPago === 0) {
+                    despesas[idx].dataPagamento = '';
+                }
 
                 saveAndSyncData();
                 updateAll();
@@ -1093,12 +1290,14 @@
 
         function renderTables() {
             const { fDespesas, fEntradas } = getFilteredData();
-            const search = document.getElementById('search-despesas')?.value.toLowerCase() || '';
+            const isMaster = currentUser && currentUser.role === 'MASTER';
 
+            // 1. TABELA CONTAS A PAGAR (PENDENTES)
+            const searchPendentes = document.getElementById('search-despesas')?.value.toLowerCase() || '';
             const tbodyDespesas = document.getElementById('table-despesas-body');
             tbodyDespesas.innerHTML = '';
 
-            let contasPagar = fDespesas.filter(d => !d.valorPago || d.valorPago === 0);
+            let contasPagar = applyPeriodFilter(fDespesas.filter(d => !d.valorPago || d.valorPago === 0), quickPeriodFilter, 'vencimento');
 
             contasPagar.sort((a, b) => {
                 const dtA = a.dataVencimento || '9999-12-31';
@@ -1107,9 +1306,9 @@
             });
 
             const filteredDesp = contasPagar.filter(d => 
-                (d.descricao || '').toLowerCase().includes(search) || 
-                (d.tipoDespesa || '').toLowerCase().includes(search) ||
-                String(d.codigo || '').toLowerCase().includes(search)
+                (d.descricao || '').toLowerCase().includes(searchPendentes) || 
+                (d.tipoDespesa || '').toLowerCase().includes(searchPendentes) ||
+                String(d.codigo || '').toLowerCase().includes(searchPendentes)
             );
 
             if (filteredDesp.length === 0) {
@@ -1118,11 +1317,14 @@
                 filteredDesp.forEach(d => {
                     const isChecked = selectedDespesasIds.has(d.id) ? 'checked' : '';
                     const catColor = getCategoryColor(d.tipoDespesa);
+                    const editBtn = isMaster 
+                        ? `<button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar (Master)"><i data-lucide="edit-2" class="w-4 h-4"></i></button>` 
+                        : `<span class="text-zinc-600 cursor-not-allowed" title="Edição restrita ao Master"><i data-lucide="lock" class="w-3.5 h-3.5"></i></span>`;
 
                     tbodyDespesas.innerHTML += `
                         <tr class="hover:bg-dark-hover/50 transition">
                             <td class="p-3 text-center">
-                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this)" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this, 'pendentes')" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
                             </td>
                             <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
                             <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
@@ -1133,14 +1335,12 @@
                             <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
                             <td class="p-3">${d.mes || '-'}</td>
                             <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
-                            
                             <td class="p-3 text-right">
                                 <input type="number" step="0.01" value="${d.valorPago || ''}" 
                                        onchange="updateValorPagoDirectly(${d.id}, this)" 
                                        placeholder="0.00" 
                                        class="w-24 text-right bg-dark-bg border border-dark-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-500">
                             </td>
-
                             <td class="p-3 font-semibold text-amber-300">${formatDateBR(d.dataVencimento)}</td>
                             <td class="p-3 text-center">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -1149,7 +1349,7 @@
                             </td>
                             <td class="p-3 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    ${editBtn}
                                     <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             </td>
@@ -1158,8 +1358,71 @@
                 });
             }
 
-            updateBulkBar();
+            // 2. TABELA CONTAS PAGAS (LIQUIDADAS)
+            const searchPagas = document.getElementById('search-pagas')?.value.toLowerCase() || '';
+            const tbodyPagas = document.getElementById('table-pagas-body');
+            tbodyPagas.innerHTML = '';
 
+            let contasPagas = applyPeriodFilter(fDespesas.filter(d => d.valorPago && d.valorPago > 0), quickPeriodFilterPagas, 'pagamento');
+
+            contasPagas.sort((a, b) => {
+                const dtA = a.dataPagamento || a.dataVencimento || '0000-00-00';
+                const dtB = b.dataPagamento || b.dataVencimento || '0000-00-00';
+                return dtB.localeCompare(dtA); // Mais recentes primeiro
+            });
+
+            const filteredPagas = contasPagas.filter(d => 
+                (d.descricao || '').toLowerCase().includes(searchPagas) || 
+                (d.tipoDespesa || '').toLowerCase().includes(searchPagas) ||
+                String(d.codigo || '').toLowerCase().includes(searchPagas)
+            );
+
+            if (filteredPagas.length === 0) {
+                tbodyPagas.innerHTML = `<tr><td colspan="12" class="p-4 text-center text-zinc-500">Nenhuma despesa paga encontrada neste filtro.</td></tr>`;
+            } else {
+                filteredPagas.forEach(d => {
+                    const isChecked = selectedPagasIds.has(d.id) ? 'checked' : '';
+                    const catColor = getCategoryColor(d.tipoDespesa);
+                    const editBtn = isMaster 
+                        ? `<button onclick="openEditDespesaModal(${d.id})" class="text-zinc-400 hover:text-brand-400" title="Editar Valores/Datas (Master)"><i data-lucide="edit-2" class="w-4 h-4"></i></button>` 
+                        : `<span class="text-zinc-600 cursor-not-allowed" title="Edição restrita ao Master"><i data-lucide="lock" class="w-3.5 h-3.5"></i></span>`;
+
+                    tbodyPagas.innerHTML += `
+                        <tr class="hover:bg-dark-hover/50 transition">
+                            <td class="p-3 text-center">
+                                <input type="checkbox" ${isChecked} onchange="toggleSelectDespesa(${d.id}, this, 'pagas')" class="rounded bg-dark-input border-dark-border text-brand-600 focus:ring-0 cursor-pointer">
+                            </td>
+                            <td class="p-3 font-mono text-brand-400 font-bold">${d.codigo || '-'}</td>
+                            <td class="p-3">${formatDateBR(d.dataLancamento)}</td>
+                            <td class="p-3 font-medium text-white flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${catColor}"></span>
+                                ${d.tipoDespesa || 'Geral'}
+                            </td>
+                            <td class="p-3 text-zinc-300">${d.descricao || 'Sem descrição'}</td>
+                            <td class="p-3">${d.mes || '-'}</td>
+                            <td class="p-3 text-right font-semibold text-zinc-400">${formatCurrency(parseFloat(d.valor) || 0)}</td>
+                            <td class="p-3 text-right font-bold text-emerald-400">${formatCurrency(parseFloat(d.valorPago) || 0)}</td>
+                            <td class="p-3 text-zinc-400">${formatDateBR(d.dataVencimento)}</td>
+                            <td class="p-3 font-semibold text-emerald-300">${formatDateBR(d.dataPagamento)}</td>
+                            <td class="p-3 text-center">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    Pago
+                                </span>
+                            </td>
+                            <td class="p-3 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    ${editBtn}
+                                    <button onclick="deleteDespesa(${d.id})" class="text-zinc-500 hover:text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            updateBulkBars();
+
+            // 3. TABELA ENTRADAS
             const tbodyEntradas = document.getElementById('table-entradas-body');
             tbodyEntradas.innerHTML = '';
             fEntradas.forEach(e => {
@@ -1181,6 +1444,10 @@
         }
 
         function openEditDespesaModal(id) {
+            if (!currentUser || currentUser.role !== 'MASTER') {
+                alert('Apenas usuários com perfil MASTER podem editar lançamentos.');
+                return;
+            }
             const d = despesas.find(item => item.id == id);
             if (!d) return;
 
@@ -1192,6 +1459,7 @@
             document.getElementById('edit-despesa-valor').value = d.valor || 0;
             document.getElementById('edit-despesa-valorpago').value = d.valorPago || 0;
             document.getElementById('edit-despesa-venc').value = d.dataVencimento || '';
+            document.getElementById('edit-despesa-datapag').value = d.dataPagamento || '';
 
             document.getElementById('modal-edit-despesa').classList.remove('hidden');
         }
@@ -1204,6 +1472,7 @@
             if (confirm('Tem certeza de que deseja excluir esta despesa?')) {
                 despesas = despesas.filter(d => d.id != id);
                 selectedDespesasIds.delete(id);
+                selectedPagasIds.delete(id);
                 saveAndSyncData();
                 updateAll();
             }
@@ -1357,179 +1626,192 @@
         }
 
         function updateDiretoria() {
-            const selectedMonth = document.getElementById('dir-month-select').value;
+            try {
+                const selectedMonth = document.getElementById('dir-month-select').value;
 
-            let dDespesas = [...despesas];
-            let dEntradas = [...entradas];
+                let dDespesas = [...despesas];
+                let dEntradas = [...entradas];
 
-            let monthsLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            let entComp = new Array(12).fill(0);
-            let saiComp = new Array(12).fill(0);
+                let monthsLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                let entComp = new Array(12).fill(0);
+                let saiComp = new Array(12).fill(0);
 
-            entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
-            despesas.forEach(d => {
-                const dt = d.dataVencimento || d.dataLancamento;
-                let m = -1;
-                if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                    m = monthMap[String(d.mes).toLowerCase().trim()];
-                } else if (dt) {
-                    m = new Date(dt + 'T00:00:00').getMonth();
-                }
-                if (m >= 0 && m < 12) saiComp[m] += d.valor;
-            });
-
-            if (selectedMonth !== 'all') {
-                const m = parseInt(selectedMonth);
-                monthsLabels = [monthsLabels[m]];
-                entComp = [entComp[m]];
-                saiComp = [saiComp[m]];
-
-                dDespesas = dDespesas.filter(d => {
-                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
-                        return monthMap[String(d.mes).toLowerCase().trim()] === m;
-                    }
+                entradas.forEach(e => { if (e.data) { const m = new Date(e.data + 'T00:00:00').getMonth(); if (m >= 0 && m < 12) entComp[m] += e.valor; } });
+                despesas.forEach(d => {
                     const dt = d.dataVencimento || d.dataLancamento;
-                    if (dt) {
-                        const parsed = new Date(dt + 'T00:00:00');
-                        return !isNaN(parsed) && parsed.getMonth() === m;
+                    let m = -1;
+                    if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
+                        m = monthMap[String(d.mes).toLowerCase().trim()];
+                    } else if (dt) {
+                        m = new Date(dt + 'T00:00:00').getMonth();
                     }
-                    return false;
+                    if (m >= 0 && m < 12) saiComp[m] += d.valor;
                 });
 
-                dEntradas = dEntradas.filter(e => {
-                    if (!e.data) return false;
-                    const parsed = new Date(e.data + 'T00:00:00');
-                    return !isNaN(parsed) && parsed.getMonth() === m;
+                if (selectedMonth !== 'all') {
+                    const m = parseInt(selectedMonth);
+                    monthsLabels = [monthsLabels[m]];
+                    entComp = [entComp[m]];
+                    saiComp = [saiComp[m]];
+
+                    dDespesas = dDespesas.filter(d => {
+                        if (d.mes && monthMap[String(d.mes).toLowerCase().trim()] !== undefined) {
+                            return monthMap[String(d.mes).toLowerCase().trim()] === m;
+                        }
+                        const dt = d.dataVencimento || d.dataLancamento;
+                        if (dt) {
+                            const parsed = new Date(dt + 'T00:00:00');
+                            return !isNaN(parsed) && parsed.getMonth() === m;
+                        }
+                        return false;
+                    });
+
+                    dEntradas = dEntradas.filter(e => {
+                        if (!e.data) return false;
+                        const parsed = new Date(e.data + 'T00:00:00');
+                        return !isNaN(parsed) && parsed.getMonth() === m;
+                    });
+                }
+
+                const totalEntradas = dEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
+                const totalSaidas = dDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+                const resultado = totalEntradas - totalSaidas;
+                const margem = totalEntradas > 0 ? ((resultado / totalEntradas) * 100).toFixed(1) : '0.0';
+
+                const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
+                const pendentes = totalSaidas - pagas;
+
+                document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
+                document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
+                document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
+                document.getElementById('dir-kpi-resultado').className = `text-2xl font-black mt-1 ${resultado >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                document.getElementById('dir-kpi-margem').textContent = `Margem Operacional: ${margem}%`;
+                document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
+
+                if (charts.dirCompMensal) charts.dirCompMensal.destroy();
+                const elComp = document.getElementById('dir-chart-comparativo-mensal');
+                if (elComp) {
+                    charts.dirCompMensal = new Chart(elComp.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: monthsLabels,
+                            datasets: [
+                                { label: 'Entradas (Faturamento)', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
+                                { label: 'Saídas (Custos)', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } },
+                            scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
+                        }
+                    });
+                }
+
+                if (charts.dirBalanco) charts.dirBalanco.destroy();
+                const elBal = document.getElementById('dir-chart-balanco');
+                if (elBal) {
+                    charts.dirBalanco = new Chart(elBal.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Entradas (Créditos)', 'Saídas (Custos)'],
+                            datasets: [{
+                                data: [totalEntradas, totalSaidas],
+                                backgroundColor: ['#10b981', '#ef4444'],
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
+                        }
+                    });
+                }
+
+                const tipoMap = {};
+                dDespesas.forEach(d => {
+                    const t = d.tipoDespesa || 'Geral';
+                    tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
                 });
-            }
 
-            const totalEntradas = dEntradas.reduce((acc, e) => acc + (parseFloat(e.valor) || 0), 0);
-            const totalSaidas = dDespesas.reduce((acc, d) => acc + (parseFloat(d.valor) || 0), 0);
-            const resultado = totalEntradas - totalSaidas;
-            const margem = totalEntradas > 0 ? ((resultado / totalEntradas) * 100).toFixed(1) : '0.0';
+                const dirTipoKeys = Object.keys(tipoMap);
+                const dirTipoColors = getColorsForCategories(dirTipoKeys);
 
-            const pagas = dDespesas.filter(d => d.valorPago && d.valorPago > 0).reduce((acc, d) => acc + d.valor, 0);
-            const pendentes = totalSaidas - pagas;
-
-            document.getElementById('dir-kpi-entradas').textContent = formatCurrency(totalEntradas);
-            document.getElementById('dir-kpi-saidas').textContent = formatCurrency(totalSaidas);
-            document.getElementById('dir-kpi-resultado').textContent = formatCurrency(resultado);
-            document.getElementById('dir-kpi-resultado').className = `text-2xl font-black mt-1 ${resultado >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-            document.getElementById('dir-kpi-margem').textContent = `Margem Operacional: ${margem}%`;
-            document.getElementById('dir-kpi-pendente').textContent = formatCurrency(pendentes);
-
-            if (charts.dirCompMensal) charts.dirCompMensal.destroy();
-            charts.dirCompMensal = new Chart(document.getElementById('dir-chart-comparativo-mensal').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: monthsLabels,
-                    datasets: [
-                        { label: 'Entradas (Faturamento)', data: entComp, backgroundColor: '#10b981', borderRadius: 6 },
-                        { label: 'Saídas (Custos)', data: saiComp, backgroundColor: '#ef4444', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa' } } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
+                if (charts.dirTipoMês) charts.dirTipoMês.destroy();
+                const elTipoM = document.getElementById('dir-chart-tipo');
+                if (elTipoM) {
+                    charts.dirTipoMês = new Chart(elTipoM.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
+                            datasets: [{
+                                data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1],
+                                backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } }
+                        }
+                    });
                 }
-            });
 
-            if (charts.dirBalanco) charts.dirBalanco.destroy();
-            charts.dirBalanco = new Chart(document.getElementById('dir-chart-balanco').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Entradas (Créditos)', 'Saídas (Custos)'],
-                    datasets: [{
-                        data: [totalEntradas, totalSaidas],
-                        backgroundColor: ['#10b981', '#ef4444'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { ticks: { color: '#a1a1aa' } }, y: { ticks: { color: '#a1a1aa' } } }
+                const tbodyTipos = document.getElementById('dir-table-tipos-body');
+                tbodyTipos.innerHTML = '';
+
+                if (dirTipoKeys.length === 0) {
+                    tbodyTipos.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-zinc-500">Nenhuma despesa registrada para o mês selecionado.</td></tr>`;
+                } else {
+                    dirTipoKeys.forEach(tipo => {
+                        const val = tipoMap[tipo];
+                        const part = totalSaidas > 0 ? ((val / totalSaidas) * 100).toFixed(1) : '0.0';
+                        const catColor = getCategoryColor(tipo);
+                        tbodyTipos.innerHTML += `
+                            <tr class="hover:bg-dark-hover/50 transition">
+                                <td class="p-3 font-medium text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${catColor}"></span>
+                                    ${tipo}
+                                </td>
+                                <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(val)}</td>
+                                <td class="p-3 text-right font-semibold text-zinc-300">${part}%</td>
+                                <td class="p-3 text-center">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${val > (totalSaidas * 0.3) ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-brand-500/10 text-brand-400 border border-brand-500/20'}">
+                                        ${val > (totalSaidas * 0.3) ? 'Alto Impacto' : 'Normal'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
                 }
-            });
 
-            const tipoMap = {};
-            dDespesas.forEach(d => {
-                const t = d.tipoDespesa || 'Geral';
-                tipoMap[t] = (tipoMap[t] || 0) + (parseFloat(d.valor) || 0);
-            });
+                const sortedDespesas = [...dDespesas].sort((a, b) => b.valor - a.valor).slice(0, 5);
+                const containerTop = document.getElementById('dir-top-gastos-list');
+                containerTop.innerHTML = '';
 
-            const dirTipoKeys = Object.keys(tipoMap);
-            const dirTipoColors = getColorsForCategories(dirTipoKeys);
-
-            if (charts.dirTipoMês) charts.dirTipoMês.destroy();
-            charts.dirTipoMês = new Chart(document.getElementById('dir-chart-tipo').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: dirTipoKeys.length ? dirTipoKeys : ['Sem dados'],
-                    datasets: [{
-                        data: Object.values(tipoMap).length ? Object.values(tipoMap) : [1],
-                        backgroundColor: dirTipoKeys.length ? dirTipoColors : ['#3f3f46']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#a1a1aa', font: { size: 10 } } } }
-                }
-            });
-
-            const tbodyTipos = document.getElementById('dir-table-tipos-body');
-            tbodyTipos.innerHTML = '';
-
-            if (dirTipoKeys.length === 0) {
-                tbodyTipos.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-zinc-500">Nenhuma despesa registrada para o mês selecionado.</td></tr>`;
-            } else {
-                dirTipoKeys.forEach(tipo => {
-                    const val = tipoMap[tipo];
-                    const part = totalSaidas > 0 ? ((val / totalSaidas) * 100).toFixed(1) : '0.0';
-                    const catColor = getCategoryColor(tipo);
-                    tbodyTipos.innerHTML += `
-                        <tr class="hover:bg-dark-hover/50 transition">
-                            <td class="p-3 font-medium text-white flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${catColor}"></span>
-                                ${tipo}
-                            </td>
-                            <td class="p-3 text-right font-bold text-rose-400">${formatCurrency(val)}</td>
-                            <td class="p-3 text-right font-semibold text-zinc-300">${part}%</td>
-                            <td class="p-3 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${val > (totalSaidas * 0.3) ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-brand-500/10 text-brand-400 border border-brand-500/20'}">
-                                    ${val > (totalSaidas * 0.3) ? 'Alto Impacto' : 'Normal'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            const sortedDespesas = [...dDespesas].sort((a, b) => b.valor - a.valor).slice(0, 5);
-            const containerTop = document.getElementById('dir-top-gastos-list');
-            containerTop.innerHTML = '';
-
-            if (sortedDespesas.length === 0) {
-                containerTop.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">Sem registros no período</div>`;
-            } else {
-                sortedDespesas.forEach((item, idx) => {
-                    containerTop.innerHTML += `
-                        <div class="flex items-center justify-between p-3 bg-dark-bg border border-dark-border rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full bg-brand-600/20 text-brand-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
-                                <div>
-                                    <div class="text-xs font-bold text-white">${item.descricao || 'Sem descrição'}</div>
-                                    <div class="text-[10px] text-zinc-400">${item.tipoDespesa || 'Geral'}</div>
+                if (sortedDespesas.length === 0) {
+                    containerTop.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">Sem registros no período</div>`;
+                } else {
+                    sortedDespesas.forEach((item, idx) => {
+                        containerTop.innerHTML += `
+                            <div class="flex items-center justify-between p-3 bg-dark-bg border border-dark-border rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-brand-600/20 text-brand-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">${item.descricao || 'Sem descrição'}</div>
+                                        <div class="text-[10px] text-zinc-400">${item.tipoDespesa || 'Geral'}</div>
+                                    </div>
                                 </div>
+                                <div class="text-xs font-black text-rose-400">${formatCurrency(item.valor)}</div>
                             </div>
-                            <div class="text-xs font-black text-rose-400">${formatCurrency(item.valor)}</div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error("Erro diretoria:", err);
             }
         }
 
@@ -1590,6 +1872,8 @@
 
                     let monthName = String(row[4] || '').trim();
                     const venc = formatDateVal(row[7]);
+                    const dataPag = row[8] ? formatDateVal(row[8]) : (valPago > 0 ? new Date().toISOString().split('T')[0] : '');
+
                     if (!monthName && venc) {
                         const dt = new Date(venc + 'T00:00:00');
                         const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -1605,6 +1889,7 @@
                         valor: valTotal,
                         valorPago: valPago,
                         dataVencimento: venc,
+                        dataPagamento: dataPag,
                         status: valPago > 0 ? 'Pago' : 'Pendente'
                     };
 
@@ -1615,6 +1900,7 @@
                         despesas[indexExistente].status = itemImportado.valorPago > 0 ? 'Pago' : 'Pendente';
                         despesas[indexExistente].valor = itemImportado.valor || despesas[indexExistente].valor;
                         despesas[indexExistente].dataVencimento = itemImportado.dataVencimento || despesas[indexExistente].dataVencimento;
+                        despesas[indexExistente].dataPagamento = itemImportado.dataPagamento || despesas[indexExistente].dataPagamento;
                         despesas[indexExistente].dataLancamento = itemImportado.dataLancamento || despesas[indexExistente].dataLancamento;
                         despesas[indexExistente].tipoDespesa = itemImportado.tipoDespesa || despesas[indexExistente].tipoDespesa;
                         despesas[indexExistente].descricao = itemImportado.descricao || despesas[indexExistente].descricao;
@@ -1626,7 +1912,9 @@
                 }
 
                 saveAndSyncData();
-                alert(`Planilha importada com sucesso!\n• ${novos} novos itens.\n• ${atualizados} itens atualizados.`);
+                alert(`Planilha importada com sucesso!
+• ${novos} novos itens.
+• ${atualizados} itens atualizados.`);
                 updateAll();
             };
             reader.readAsArrayBuffer(file);
@@ -1641,7 +1929,8 @@
                 'Mês': d.mes || '',
                 'Valor Total': d.valor || 0,
                 'Valor Pago': d.valorPago || 0,
-                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : ''
+                'Vencimento': d.dataVencimento ? formatDateBR(d.dataVencimento) : '',
+                'Data Pagamento': d.dataPagamento ? formatDateBR(d.dataPagamento) : ''
             })) : [{
                 'Codigo': 1,
                 'Lançamento': '05/01/2026',
@@ -1650,11 +1939,12 @@
                 'Mês': 'Janeiro',
                 'Valor Total': 1500.00,
                 'Valor Pago': 0,
-                'Vencimento': '15/01/2026'
+                'Vencimento': '15/01/2026',
+                'Data Pagamento': ''
             }];
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Contas a Pagar");
+            XLSX.utils.book_append_sheet(wb, ws, "Controle Financeiro");
             XLSX.writeFile(wb, "Controle_Financeiro_Stanize.xlsx");
         }
 
